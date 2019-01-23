@@ -1,0 +1,58 @@
+{
+  "name": "jsdoc-tsd-webpack-plugin",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build:prod": "rimraf dist && cross-env NODE_ENV=production babel src --out-dir dist",
+    "build:dev": "cross-env NODE_ENV=production cross-env babel src --out-dir dist",
+    "test": "jest",
+    "test:dev": "jest",
+    "test:debug": "cross-env babel-node --inspect=9229 node_modules/jest/bin/jest.js --runInBand",
+    "prepare": "jest --clearCache",
+    "prepublishOnly": "npm run build:prod"
+  },
+  "author": "Jaid <jaid.jsx@gmail.com> (https://github.com/Jaid)",
+  "license": "MIT",
+  "babel": {
+    "presets": [
+      "jaid"
+    ]
+  },
+  "eslintConfig": {
+    "extends": "jaid"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "dependencies": {
+    "cross-spawn-promise": "^0.10.1",
+    "first-existing-path": "^1.0.1",
+    "jaguarjs-jsdoc": "^1.1.0",
+    "jsdoc": "^3.5.5",
+    "jsdoc-export-default-interop": "^0.3.1",
+    "tmp-promise": "^1.0.5",
+    "tsd-jsdoc": "^2.1.2"
+  },
+  "peerDependencies": {
+    "webpack": "^4.28.0"
+  },
+  "optionalDependencies": {},
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/node": "^7.2.2",
+    "@babel/register": "^7.0.0",
+    "babel-jest": "24.0.0-alpha.12",
+    "babel-preset-jaid": "^2.6.0",
+    "clean-webpack-plugin": "^1.0.1",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.12.1",
+    "eslint-config-jaid": "^1.10.0",
+    "execp": "0.0.1",
+    "jest": "24.0.0-alpha.12",
+    "publishimo-webpack-plugin": "^1.7.2",
+    "shell-exec": "^1.0.2",
+    "webpack": "^4.29.0",
+    "webpack-cli": "^3.2.1",
+    "webpack-config-jaid": "^1.16.1"
+  }
+}
