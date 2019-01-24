@@ -26,9 +26,7 @@
   },
   "dependencies": {
     "better-docs": "^1.0.2",
-    "cross-spawn-promise": "^0.10.1",
     "first-existing-path": "^1.0.1",
-    "jaguarjs-jsdoc": "^1.1.0",
     "jsdoc": "^3.5.5",
     "jsdoc-export-default-interop": "^0.3.1",
     "node-exec-promise": "^1.0.2",
@@ -49,10 +47,8 @@
     "cross-env": "^5.2.0",
     "eslint": "^5.12.1",
     "eslint-config-jaid": "^1.10.0",
-    "execp": "0.0.1",
     "jest": "24.0.0-alpha.12",
     "publishimo-webpack-plugin": "^1.7.2",
-    "shell-exec": "^1.0.2",
     "webpack": "^4.29.0",
     "webpack-cli": "^3.2.1",
     "webpack-config-jaid": "^1.16.1"

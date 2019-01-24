@@ -1,11 +1,8 @@
 import path from "path"
-import {spawn} from "child_process"
 
 import fs from "fs-extra"
 import tmpPromise from "tmp-promise"
-import execp from "execp"
 import firstExistingPath from "first-existing-path"
-import shellExec from "shell-exec"
 import {exec} from "node-exec-promise"
 import readPkgUp from "read-pkg-up"
 
