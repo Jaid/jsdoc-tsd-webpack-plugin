@@ -25,11 +25,13 @@
     "testEnvironment": "node"
   },
   "dependencies": {
+    "better-docs": "^1.0.2",
     "cross-spawn-promise": "^0.10.1",
     "first-existing-path": "^1.0.1",
     "jaguarjs-jsdoc": "^1.1.0",
     "jsdoc": "^3.5.5",
     "jsdoc-export-default-interop": "^0.3.1",
+    "node-exec-promise": "^1.0.2",
     "tmp-promise": "^1.0.5",
     "tsd-jsdoc": "^2.1.2"
   },
