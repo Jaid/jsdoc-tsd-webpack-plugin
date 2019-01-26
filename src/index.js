@@ -6,6 +6,8 @@ import firstExistingPath from "first-existing-path"
 import {exec} from "node-exec-promise"
 import readPkgUp from "read-pkg-up"
 
+const webpackId = "JsdocTsdWebpackPlugin"
+
 const getHtmlConfigPath = async (compiler, configBase, template, options, configDir) => {
   const config = {
     ...configBase,
@@ -52,7 +54,13 @@ export default class {
   }
 
   apply(compiler) {
-    compiler.hooks.emit.tapPromise("Test", async compilation => {
+    compiler.hooks.afterPlugins.tap(webpackId, () => {
+      compiler.hooks.publishimoGeneratedPkg?.tapPromise(webpackId, async publishimoResult => {
+        this.publishimoPkg = publishimoResult.generatedPkg
+      })
+    })
+
+    compiler.hooks.emit.tapPromise(webpackId, async compilation => {
       const configBase = {
         opts: {
           recurse: true,
@@ -65,6 +73,8 @@ export default class {
         },
         ...this.options.jsdocConfig,
       }
+
+      const {path: tempDir} = await tmpPromise.dir({prefix: "jsdoc-ts-webpack-plugin-temp-"})
 
       if (this.options.readmePath) {
         configBase.opts.readme = path.resolve(this.options.readmePath)
@@ -86,14 +96,17 @@ export default class {
 
       if (this.options.packagePath) {
         configBase.opts.package = path.resolve(this.options.packagePath)
+      } else if (this.publishimoPkg) {
+        const publishimoPkgPath = path.join(tempDir, "publishimo-pkg.json")
+        fs.outputJsonSync(publishimoPkgPath, this.publishimoPkg)
+        configBase.opts.package = publishimoPkgPath
+        console.log(tempDir)
       } else {
         const {path: foundFile} = await readPkgUp()
         if (foundFile) {
           configBase.opts.package = foundFile
         }
       }
-
-      const {path: tempDir} = await tmpPromise.dir({prefix: "jsdoc-ts-webpack-plugin-temp-"})
 
       const findModulesJobs = [
         "jsdoc/jsdoc.js",
@@ -123,10 +136,8 @@ export default class {
         getTsdConfigPath(compiler, configBase, tsdModulePath, this.options, tempDir),
       ])
 
-      console.log(htmlConfigPath)
       const jsdocJobs = [htmlConfigPath, tsdConfigPath].map(configPath => exec(`node "${jsdocPath}" --configure "${configPath}"`))
       const execResults = await Promise.all(jsdocJobs)
-      debugger
     })
   }
 

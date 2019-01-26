@@ -4,6 +4,7 @@ import webpack from "webpack"
 import pify from "pify"
 import loadJsonFile from "load-json-file"
 import CleanWebpackPlugin from "clean-webpack-plugin"
+import PublishimoWebpackPlugin from "publishimo-webpack-plugin"
 
 import JsdocTsdWebpackPlugin from "../src"
 
@@ -26,6 +27,18 @@ it("should run", async () => {
     plugins: [
       new CleanWebpackPlugin,
       new JsdocTsdWebpackPlugin,
+    ],
+  }
+  await pify(webpack)(webpackConfig)
+})
+
+it("should run with publishimo-webpack-plugin", async () => {
+  const webpackConfig = {
+    ...getWepbackConfig("with-publishimo"),
+    plugins: [
+      new CleanWebpackPlugin,
+      new JsdocTsdWebpackPlugin,
+      new PublishimoWebpackPlugin,
     ],
   }
   await pify(webpack)(webpackConfig)
