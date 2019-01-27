@@ -49,11 +49,16 @@ export default class {
       jsdocConfig: {},
       jsdocHtmlConfig: {},
       jsdocTsdConfig: {},
+      productionOnly: true,
       ...options,
     }
   }
 
   apply(compiler) {
+    if (this.options.productionOnly && compiler.options.mode !== "production") {
+      return
+    }
+
     compiler.hooks.afterPlugins.tap(webpackId, () => {
       compiler.hooks.publishimoGeneratedPkg?.tapPromise(webpackId, async publishimoResult => {
         this.publishimoPkg = publishimoResult.generatedPkg
