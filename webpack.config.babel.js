@@ -1,7 +1,7 @@
 import webpackConfigJaid from "webpack-config-jaid"
 
 export default webpackConfigJaid({
-  type: "lib",
+  type: "libClass",
   include: [
     "license.*",
     "readme.md",

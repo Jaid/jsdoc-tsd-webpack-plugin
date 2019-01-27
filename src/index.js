@@ -7,6 +7,7 @@ import {exec} from "node-exec-promise"
 import readPkgUp from "read-pkg-up"
 
 const webpackId = "JsdocTsdWebpackPlugin"
+const tsdFileName = "types.d.ts"
 
 const getHtmlConfigPath = async (compiler, configBase, template, options, configDir) => {
   const config = {
@@ -29,9 +30,15 @@ const getTsdConfigPath = async (compiler, configBase, template, options, configD
     opts: {
       ...configBase.opts,
       template,
-      destination: options.tsdOutputDir || path.join(compiler.context, "dist-jsdoc", "tsd"),
     },
     ...options.jsdocTsdConfig,
+  }
+  if (options.tsdOutputFile) {
+    config.opts.destination = path.dirname(options.tsdOutputFile)
+    config.opts.outFile = path.basename(options.tsdOutputFile)
+  } else {
+    config.opts.destination = configDir
+    config.opts.outFile = tsdFileName
   }
   const configPath = path.join(configDir, "jsdoc-config-tsd.json")
   fs.writeJsonSync(configPath, config)
@@ -43,7 +50,7 @@ export default class {
   constructor(options) {
     this.options = {
       htmlOutputDir: null,
-      tsdOutputDir: null,
+      tsdOutputFile: null,
       readmePath: null,
       packagePath: null,
       jsdocConfig: {},
@@ -142,7 +149,15 @@ export default class {
       ])
 
       const jsdocJobs = [htmlConfigPath, tsdConfigPath].map(configPath => exec(`node "${jsdocPath}" --configure "${configPath}"`))
-      const execResults = await Promise.all(jsdocJobs)
+      await Promise.all(jsdocJobs)
+
+      if (!this.options.tsdOutputFile) {
+        const tsdContent = fs.readFileSync(path.join(tempDir, tsdFileName))
+        compilation.assets[tsdFileName] = {
+          source: () => tsdContent,
+          size: () => tsdContent.length,
+        }
+      }
     })
   }
 
