@@ -48,6 +48,6 @@
     "publishimo-webpack-plugin": "1.7.5",
     "webpack": "^4.29.0",
     "webpack-cli": "^3.2.1",
-    "webpack-config-jaid": "^1.17.0"
+    "webpack-config-jaid": "1.18.0"
   }
 }
