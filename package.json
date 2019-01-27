@@ -1,18 +1,15 @@
 {
-  "name": "jsdoc-tsd-webpack-plugin",
   "version": "1.1.0",
-  "main": "index.js",
   "scripts": {
-    "build:prod": "rimraf dist && cross-env NODE_ENV=production babel src --out-dir dist",
-    "build:dev": "cross-env NODE_ENV=production cross-env babel src --out-dir dist",
+    "build:prod": "NODE_ENV=production webpack",
+    "build:dev": "webpack",
     "test": "jest",
     "test:dev": "jest",
     "test:debug": "cross-env babel-node --inspect=9229 node_modules/jest/bin/jest.js --runInBand",
     "prepare": "jest --clearCache",
-    "prepublishOnly": "npm run build:prod"
+    "release": "npm run build:prod && npm publish dist && cross-env git tag v$npm_package_version && git push --tags && cross-env opn https://github.com/$npm_package_author_name/$npm_package_name/releases/new?tag=v$npm_package_version"
   },
   "author": "Jaid <jaid.jsx@gmail.com> (https://github.com/Jaid)",
-  "license": "MIT",
   "babel": {
     "presets": [
       "jaid"
@@ -40,6 +37,7 @@
     "publishimo-webpack-plugin": "1.7.5"
   },
   "devDependencies": {
+    "@babel/cli": "^7.2.3",
     "@babel/core": "^7.2.2",
     "@babel/node": "^7.2.2",
     "@babel/register": "^7.0.0",
@@ -50,9 +48,10 @@
     "eslint": "^5.12.1",
     "eslint-config-jaid": "^1.10.0",
     "jest": "24.0.0-alpha.12",
+    "opn-cli": "^4.0.0",
     "publishimo-webpack-plugin": "1.7.5",
     "webpack": "^4.29.0",
     "webpack-cli": "^3.2.1",
-    "webpack-config-jaid": "^1.16.1"
+    "webpack-config-jaid": "^1.17.0"
   }
 }
