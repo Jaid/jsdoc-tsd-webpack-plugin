@@ -1,5 +1,5 @@
 {
-  "version": "1.4.1",
+  "version": "1.4.2",
   "scripts": {
     "clean": "rimraf dist test/*/dist test/*/dist-jsdoc",
     "build:prod": "NODE_ENV=production webpack",
