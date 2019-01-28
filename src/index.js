@@ -143,7 +143,8 @@ export default class {
       configBase.plugins = [exportDefaultModulePath]
 
       if (!this.options.tsdOutputFile) {
-        this.options.autoTsdOutputFile = path.join(tempDir, `${compilation.chunks[0].files[0]}.d.ts`)
+        const tsdFileName = path.basename(compilation.chunks[0].files[0], ".js")
+        this.options.autoTsdOutputFile = path.join(tempDir, `${tsdFileName}.d.ts`)
       }
 
       const [htmlConfigPath, tsdConfigPath] = await Promise.all([
