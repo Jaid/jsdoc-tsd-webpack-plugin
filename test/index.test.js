@@ -42,3 +42,15 @@ it("should run with publishimo-webpack-plugin", async () => {
   }
   await pify(webpack)(webpackConfig)
 })
+
+it("should run with {babel: true}", async () => {
+  const webpackConfig = {
+    ...getWepbackConfig("with-babel"),
+    plugins: [
+      new CleanWebpackPlugin,
+      new JsdocTsdWebpackPlugin({babel: false}),
+      new PublishimoWebpackPlugin,
+    ],
+  }
+  await pify(webpack)(webpackConfig)
+})
