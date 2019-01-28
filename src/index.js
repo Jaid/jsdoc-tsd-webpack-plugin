@@ -7,15 +7,14 @@ import {exec} from "node-exec-promise"
 import readPkgUp from "read-pkg-up"
 
 const webpackId = "JsdocTsdWebpackPlugin"
-const tsdFileName = "types.d.ts"
 
-const getHtmlConfigPath = async (compiler, configBase, template, options, configDir) => {
+const getHtmlConfigPath = async (compilation, configBase, template, options, configDir) => {
   const config = {
     ...configBase,
     opts: {
       ...configBase.opts,
       template,
-      destination: options.htmlOutputDir || path.join(compiler.context, "dist-jsdoc", "html"),
+      destination: options.htmlOutputDir || path.join(compilation.compiler.context, "dist-jsdoc", "html"),
     },
     ...options.jsdocHtmlConfig,
   }
@@ -24,7 +23,7 @@ const getHtmlConfigPath = async (compiler, configBase, template, options, config
   return configPath
 }
 
-const getTsdConfigPath = async (compiler, configBase, template, options, configDir) => {
+const getTsdConfigPath = async (compilation, configBase, template, options, configDir) => {
   const config = {
     ...configBase,
     opts: {
@@ -37,8 +36,8 @@ const getTsdConfigPath = async (compiler, configBase, template, options, configD
     config.opts.destination = path.dirname(options.tsdOutputFile)
     config.opts.outFile = path.basename(options.tsdOutputFile)
   } else {
-    config.opts.destination = configDir
-    config.opts.outFile = tsdFileName
+    config.opts.destination = path.dirname(options.autoTsdOutputFile)
+    config.opts.outFile = path.basename(options.autoTsdOutputFile)
   }
   const configPath = path.join(configDir, "jsdoc-config-tsd.json")
   fs.writeJsonSync(configPath, config)
@@ -143,17 +142,21 @@ export default class {
 
       configBase.plugins = [exportDefaultModulePath]
 
+      if (!this.options.tsdOutputFile) {
+        this.options.autoTsdOutputFile = path.join(tempDir, `${compilation.chunks[0].name}.d.ts`)
+      }
+
       const [htmlConfigPath, tsdConfigPath] = await Promise.all([
-        getHtmlConfigPath(compiler, configBase, htmlModulePath, this.options, tempDir),
-        getTsdConfigPath(compiler, configBase, tsdModulePath, this.options, tempDir),
+        getHtmlConfigPath(compilation, configBase, htmlModulePath, this.options, tempDir),
+        getTsdConfigPath(compilation, configBase, tsdModulePath, this.options, tempDir),
       ])
 
       const jsdocJobs = [htmlConfigPath, tsdConfigPath].map(configPath => exec(`node "${jsdocPath}" --configure "${configPath}"`))
       await Promise.all(jsdocJobs)
 
-      if (!this.options.tsdOutputFile) {
-        const tsdContent = fs.readFileSync(path.join(tempDir, tsdFileName))
-        compilation.assets[tsdFileName] = {
+      if (this.options.autoTsdOutputFile) {
+        const tsdContent = fs.readFileSync(this.options.autoTsdOutputFile)
+        compilation.assets[path.basename(this.options.autoTsdOutputFile)] = {
           source: () => tsdContent,
           size: () => tsdContent.length,
         }
