@@ -1,5 +1,5 @@
 {
-  "version": "1.4.3",
+  "version": "1.5.0",
   "scripts": {
     "clean": "rimraf dist test/*/dist test/*/dist-jsdoc",
     "build:prod": "NODE_ENV=production webpack",
@@ -25,6 +25,7 @@
     "better-docs": "^1.0.2",
     "first-existing-path": "^1.0.1",
     "jsdoc": "^3.5.5",
+    "jsdoc-babel": "^0.5.0",
     "jsdoc-export-default-interop": "^0.3.1",
     "node-exec-promise": "^1.0.2",
     "tmp-promise": "^1.0.5",
