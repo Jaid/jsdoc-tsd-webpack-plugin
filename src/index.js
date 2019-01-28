@@ -56,6 +56,7 @@ export default class {
       jsdocHtmlConfig: {},
       jsdocTsdConfig: {},
       productionOnly: true,
+      babel: false,
       ...options,
     }
   }
@@ -124,6 +125,7 @@ export default class {
         "tsd-jsdoc/dist",
         "better-docs",
         "jsdoc-export-default-interop/dist/index.js",
+        "jsdoc-babel/lib/index.js",
       ].map(async file => {
         const possiblePaths = [
           path.resolve(compiler.context, "node_modules", file),
@@ -138,9 +140,13 @@ export default class {
         return foundFile
       })
 
-      const [jsdocPath, tsdModulePath, htmlModulePath, exportDefaultModulePath] = await Promise.all(findModulesJobs)
+      const [jsdocPath, tsdModulePath, htmlModulePath, exportDefaultModulePath, jsdocBabelPath] = await Promise.all(findModulesJobs)
 
       configBase.plugins = [exportDefaultModulePath]
+
+      if (this.options.babel) {
+        configBase.plugins.push(jsdocBabelPath)
+      }
 
       if (!this.options.tsdOutputFile) {
         const tsdFileName = path.basename(compilation.chunks[0].files[0], ".js")
