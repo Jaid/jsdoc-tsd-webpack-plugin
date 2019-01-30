@@ -5,6 +5,7 @@ import tmpPromise from "tmp-promise"
 import firstExistingPath from "first-existing-path"
 import {exec} from "node-exec-promise"
 import readPkgUp from "read-pkg-up"
+import {isObject} from "lodash"
 
 const webpackId = "JsdocTsdWebpackPlugin"
 
@@ -112,7 +113,6 @@ export default class {
         const publishimoPkgPath = path.join(tempDir, "publishimo-pkg.json")
         fs.outputJsonSync(publishimoPkgPath, this.publishimoPkg)
         configBase.opts.package = publishimoPkgPath
-        console.log(tempDir)
       } else {
         const {path: foundFile} = await readPkgUp()
         if (foundFile) {
@@ -144,8 +144,11 @@ export default class {
 
       configBase.plugins = [exportDefaultModulePath]
 
-      if (this.options.babel) {
+      if (this.options.babel === true) {
         configBase.plugins.push(jsdocBabelPath)
+      } else if (isObject(this.options.babel)) {
+        configBase.plugins.push(jsdocBabelPath)
+        configBase.babel = this.options.babel
       }
 
       if (!this.options.tsdOutputFile) {
