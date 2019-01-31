@@ -3,10 +3,9 @@ import path from "path"
 import fs from "fs-extra"
 import tmpPromise from "tmp-promise"
 import firstExistingPath from "first-existing-path"
-import {exec} from "node-exec-promise"
+import getExecFile from "get-exec-file"
 import readPkgUp from "read-pkg-up"
 import {isObject} from "lodash"
-import commandJoin from "command-join"
 
 const debug = require("debug")("jsdoc-tsd-webpack-plugin")
 
@@ -51,6 +50,7 @@ const getTsdConfigPath = async (compilation, configBase, template, options, conf
 export default class {
 
   constructor(options) {
+    debug("User options:", options)
     this.options = {
       htmlOutputDir: null,
       tsdOutputFile: null,
@@ -63,16 +63,19 @@ export default class {
       babel: false,
       ...options,
     }
+    debug("Merged options:", this.options)
   }
 
   apply(compiler) {
     if (this.options.productionOnly && compiler.options.mode !== "production") {
+      debug(`Webpack mode is "${compiler.options.mode}" and not "production", skipping.`)
       return
     }
 
     compiler.hooks.afterPlugins.tap(webpackId, () => {
       compiler.hooks.publishimoGeneratedPkg?.tapPromise(webpackId, async publishimoResult => {
         this.publishimoPkg = publishimoResult.generatedPkg
+        debug("Got info from publishimo:", publishimoResult)
       })
     })
 
@@ -91,6 +94,7 @@ export default class {
       }
 
       const {path: tempDir} = await tmpPromise.dir({prefix: "jsdoc-ts-webpack-plugin-temp-"})
+      debug(`Temp directory: ${tempDir}`)
 
       if (this.options.readmePath) {
         configBase.opts.readme = path.resolve(this.options.readmePath)
@@ -107,19 +111,23 @@ export default class {
         ].map(file => path.resolve(compiler.context, file)))
         if (foundFile) {
           configBase.opts.readme = foundFile
+          debug(`Using readme file ${foundFile}`)
         }
       }
 
       if (this.options.packagePath) {
         configBase.opts.package = path.resolve(this.options.packagePath)
+        debug("Using pkg source", configBase.opts.package)
       } else if (this.publishimoPkg) {
         const publishimoPkgPath = path.join(tempDir, "publishimo-pkg.json")
         fs.outputJsonSync(publishimoPkgPath, this.publishimoPkg)
         configBase.opts.package = publishimoPkgPath
+        debug("Using pkg source", configBase.opts.package)
       } else {
         const {path: foundFile} = await readPkgUp()
         if (foundFile) {
           configBase.opts.package = foundFile
+          debug("Using pkg source", configBase.opts.package)
         }
       }
 
@@ -140,6 +148,7 @@ export default class {
         if (!foundFile) {
           throw new Error(`Could not find ${file}. Searched in: ${jsdocPaths}`)
         }
+        debug("Found file", foundFile)
         return foundFile
       })
 
@@ -157,6 +166,7 @@ export default class {
       if (!this.options.tsdOutputFile) {
         const tsdFileName = path.basename(compilation.chunks[0].files[0], ".js")
         this.options.autoTsdOutputFile = path.join(tempDir, `${tsdFileName}.d.ts`)
+        debug(`tsd output file should be named ${this.options.autoTsdOutputFile}`)
       }
 
       const [htmlConfigPath, tsdConfigPath] = await Promise.all([
@@ -164,15 +174,17 @@ export default class {
         getTsdConfigPath(compilation, configBase, tsdModulePath, this.options, tempDir),
       ])
 
-      const jsdocCommands = [htmlConfigPath, tsdConfigPath].map(configPath => commandJoin([process.execPath, jsdocPath, "--configure", configPath]))
-      debug("JSDoc commands", jsdocCommands)
-      const jsdocJobs = jsdocCommands.map(command => exec(command))
-
+      const jsdocJobs = [htmlConfigPath, tsdConfigPath].map(configPath => getExecFile(process.execPath, [jsdocPath, "--configure", configPath], {
+        timeout: 1000 * 120,
+      }))
       const jsdocResults = await Promise.all(jsdocJobs)
 
       for (const jsdocResult of jsdocResults) {
+        if (jsdocResult.error) {
+          throw new Error(`JSDoc failed with Error: ${error.message}`)
+        }
         if (jsdocResult.stderr) {
-          throw new Error(`JSDoc failed: ${jsdocResult.stderr}`)
+          throw new Error(`JSDoc failed with error output: ${jsdocResult.stderr}`)
         }
       }
 

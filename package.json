@@ -1,14 +1,6 @@
 {
   "version": "1.5.3",
-  "scripts": {
-    "clean": "rimraf dist test/*/dist test/*/dist-jsdoc",
-    "build:prod": "NODE_ENV=production webpack",
-    "build:dev": "webpack",
-    "test": "cross-env NODE_ENV=production jest",
-    "test:dev": "jest",
-    "test:debug": "cross-env babel-node --inspect=9229 node_modules/jest/bin/jest.js --runInBand",
-    "release": "npm run build:prod && npm publish dist && cross-env git tag v$npm_package_version && git push --tags && cross-env opn https://github.com/$npm_package_author_name/$(basename $PWD)/releases/new?tag=v$npm_package_version"
-  },
+  "private": true,
   "author": "Jaid <jaid.jsx@gmail.com> (https://github.com/Jaid)",
   "babel": {
     "presets": [
@@ -23,14 +15,13 @@
   },
   "dependencies": {
     "better-docs": "^1.1.2",
-    "command-join": "^2.0.0",
     "debug": "^4.1.1",
     "first-existing-path": "^1.0.1",
     "jsdoc": "^3.5.5",
     "jsdoc-babel": "^0.5.0",
     "jsdoc-export-default-interop": "^0.3.1",
-    "node-exec-promise": "^1.0.2",
     "tmp-promise": "^1.0.5",
+    "get-exec-file": "^1.1.0",
     "tsd-jsdoc": "^2.1.2"
   },
   "peerDependencies": {
@@ -53,5 +44,14 @@
     "webpack": "^4.29.0",
     "webpack-cli": "^3.2.1",
     "webpack-config-jaid": "1.22.0"
+  },
+  "scripts": {
+    "clean": "rimraf dist test/*/dist test/*/dist-jsdoc",
+    "build:prod": "NODE_ENV=production webpack",
+    "build:dev": "webpack",
+    "test": "cross-env NODE_ENV=production jest",
+    "test:dev": "jest",
+    "test:debug": "cross-env DEBUG=$(basename $PWD) babel-node --inspect=9229 node_modules/jest/bin/jest.js --runInBand",
+    "release": "npm run build:prod && npm publish dist && cross-env git tag v$npm_package_version && git push --tags && cross-env opn https://github.com/$npm_package_author_name/$(basename $PWD)/releases/new?tag=v$npm_package_version"
   }
 }
