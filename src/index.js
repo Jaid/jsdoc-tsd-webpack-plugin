@@ -188,6 +188,9 @@ export default class {
         }
       }
 
+      debug(`JSDoc HTML stdout: ${jsdocResults[0].stdout}`)
+      debug(`JSDoc TSD stdout: ${jsdocResults[1].stdout}`)
+
       if (this.options.autoTsdOutputFile) {
         const tsdContent = fs.readFileSync(this.options.autoTsdOutputFile)
         compilation.assets[path.basename(this.options.autoTsdOutputFile)] = {
