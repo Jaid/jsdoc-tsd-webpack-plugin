@@ -145,9 +145,9 @@ export default class {
       configBase.plugins = [exportDefaultModulePath]
 
       if (this.options.babel === true) {
-        configBase.plugins.push(jsdocBabelPath)
+        configBase.plugins = [jsdocBabelPath, ...configBase.plugins]
       } else if (isObject(this.options.babel)) {
-        configBase.plugins.push(jsdocBabelPath)
+        configBase.plugins = [jsdocBabelPath, ...configBase.plugins]
         configBase.babel = this.options.babel
       }
 
