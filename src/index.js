@@ -7,6 +7,8 @@ import {exec} from "node-exec-promise"
 import readPkgUp from "read-pkg-up"
 import {isObject} from "lodash"
 
+const debug = require("debug")("jsdoc-tsd-webpack-plugin")
+
 const webpackId = "JsdocTsdWebpackPlugin"
 
 const getHtmlConfigPath = async (compilation, configBase, template, options, configDir) => {
@@ -161,7 +163,9 @@ export default class {
         getTsdConfigPath(compilation, configBase, tsdModulePath, this.options, tempDir),
       ])
 
-      const jsdocJobs = [htmlConfigPath, tsdConfigPath].map(configPath => exec(`node "${jsdocPath}" --configure "${configPath}"`))
+      const jsdocCommands = [htmlConfigPath, tsdConfigPath].map(configPath => `${process.execPath} "${jsdocPath}" --configure "${configPath}"`)
+      debug("JSDoc commands", jsdocCommands)
+      const jsdocJobs = jsdocCommands.map(command => exec(command))
 
       const jsdocResults = await Promise.all(jsdocJobs)
 
