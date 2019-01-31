@@ -17,7 +17,7 @@ const getHtmlConfigPath = async (compilation, configBase, template, options, con
     opts: {
       ...configBase.opts,
       template,
-      destination: options.htmlOutputDir || path.join(compilation.compiler.context, "dist-jsdoc", "html"),
+      destination: options.htmlOutputDir || path.join(compilation.compiler.context, "dist-jsdoc"),
     },
     ...options.jsdocHtmlConfig,
   }
