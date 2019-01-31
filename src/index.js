@@ -1,12 +1,11 @@
 import path from "path"
-import {execSync} from "child_process"
 
 import fs from "fs-extra"
 import tmpPromise from "tmp-promise"
 import firstExistingPath from "first-existing-path"
 import readPkgUp from "read-pkg-up"
 import {isObject} from "lodash"
-import commandJoin from "command-join"
+import {renderSync} from "jsdoc-api"
 
 const debug = require("debug")("jsdoc-tsd-webpack-plugin")
 
@@ -133,7 +132,6 @@ export default class {
       }
 
       const findModulesJobs = [
-        "jsdoc/jsdoc.js",
         "tsd-jsdoc/dist",
         "better-docs",
         "jsdoc-export-default-interop/dist/index.js",
@@ -153,7 +151,7 @@ export default class {
         return foundFile
       })
 
-      const [jsdocPath, tsdModulePath, htmlModulePath, exportDefaultModulePath, jsdocBabelPath] = await Promise.all(findModulesJobs)
+      const [tsdModulePath, htmlModulePath, exportDefaultModulePath, jsdocBabelPath] = await Promise.all(findModulesJobs)
 
       configBase.plugins = [exportDefaultModulePath]
 
@@ -185,18 +183,15 @@ export default class {
 
       for (const {name, modulePath, configFactory} of setups) {
         const configPath = configFactory(compilation, configBase, modulePath, this.options, tempDir)
-        const command = commandJoin([process.execPath, jsdocPath, "--configure", configPath])
-        debug(`JSDoc ${name} command: ${command}`)
-        const out = execSync(command, {
-          timeout: 1000 * 120,
-          cwd: compiler.context,
-          encoding: "utf8",
+        debug(`${name}: Calling jsdoc-api with entry point ${compiler.options.entry} and configuration ${configPath}`)
+        renderSync({
+          files: compiler.options.entry,
+          configure: configPath,
         })
-        debug(`JSDoc ${name} output: ${out}`)
       }
 
       if (this.options.autoTsdOutputFile) {
-        debug(`Copying ${this.options.autoTsdOutputFile} to ${path.join(compiler.options.output.path, this.options.autoTsdOutputFile |> path.basename)}`)
+        debug(`Copying ${this.options.autoTsdOutputFile} to ${path.join(compiler.outputPath, this.options.autoTsdOutputFile |> path.basename)}`)
         const tsdContent = fs.readFileSync(this.options.autoTsdOutputFile)
         compilation.assets[path.basename(this.options.autoTsdOutputFile)] = {
           source: () => tsdContent,
