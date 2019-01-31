@@ -174,6 +174,9 @@ export default class {
         getTsdConfigPath(compilation, configBase, tsdModulePath, this.options, tempDir),
       ])
 
+      debug(`JSDoc HTML command: "${process.execPath}" "${jsdocPath}" --configure "${htmlConfigPath}"`)
+      debug(`JSDoc TSD command: "${process.execPath}" "${jsdocPath}" --configure "${tsdConfigPath}"`)
+
       const jsdocJobs = [htmlConfigPath, tsdConfigPath].map(configPath => getExecFile(process.execPath, [jsdocPath, "--configure", configPath], {
         timeout: 1000 * 120,
       }))
