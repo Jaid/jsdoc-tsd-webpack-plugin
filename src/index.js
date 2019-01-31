@@ -162,7 +162,14 @@ export default class {
       ])
 
       const jsdocJobs = [htmlConfigPath, tsdConfigPath].map(configPath => exec(`node "${jsdocPath}" --configure "${configPath}"`))
-      await Promise.all(jsdocJobs)
+
+      const jsdocResults = await Promise.all(jsdocJobs)
+
+      for (const jsdocResult of jsdocResults) {
+        if (jsdocResult.stderr) {
+          throw new Error(`JSDoc failed: ${jsdocResult.stderr}`)
+        }
+      }
 
       if (this.options.autoTsdOutputFile) {
         const tsdContent = fs.readFileSync(this.options.autoTsdOutputFile)
