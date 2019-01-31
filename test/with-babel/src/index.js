@@ -8,5 +8,6 @@
  * @return {string} The cleaned string
  */
 export default string => {
-  return string |> #.trim()
+  return string
+  |> #.trim()
 }

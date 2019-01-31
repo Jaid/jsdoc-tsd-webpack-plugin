@@ -1,17 +1,18 @@
 import path from "path"
+import {execSync} from "child_process"
 
 import fs from "fs-extra"
 import tmpPromise from "tmp-promise"
 import firstExistingPath from "first-existing-path"
-import getExecFile from "get-exec-file"
 import readPkgUp from "read-pkg-up"
 import {isObject} from "lodash"
+import commandJoin from "command-join"
 
 const debug = require("debug")("jsdoc-tsd-webpack-plugin")
 
 const webpackId = "JsdocTsdWebpackPlugin"
 
-const getHtmlConfigPath = async (compilation, configBase, template, options, configDir) => {
+const getHtmlConfigPath = (compilation, configBase, template, options, configDir) => {
   const config = {
     ...configBase,
     opts: {
@@ -26,7 +27,7 @@ const getHtmlConfigPath = async (compilation, configBase, template, options, con
   return configPath
 }
 
-const getTsdConfigPath = async (compilation, configBase, template, options, configDir) => {
+const getTsdConfigPath = (compilation, configBase, template, options, configDir) => {
   const config = {
     ...configBase,
     opts: {
@@ -169,32 +170,33 @@ export default class {
         debug(`tsd output file should be named ${this.options.autoTsdOutputFile}`)
       }
 
-      const [htmlConfigPath, tsdConfigPath] = await Promise.all([
-        getHtmlConfigPath(compilation, configBase, htmlModulePath, this.options, tempDir),
-        getTsdConfigPath(compilation, configBase, tsdModulePath, this.options, tempDir),
-      ])
+      const setups = [
+        {
+          name: "TSD",
+          modulePath: tsdModulePath,
+          configFactory: getTsdConfigPath,
+        },
+        {
+          name: "HTML",
+          configFactory: getHtmlConfigPath,
+          modulePath: htmlModulePath,
+        },
+      ]
 
-      debug(`JSDoc HTML command: "${process.execPath}" "${jsdocPath}" --configure "${htmlConfigPath}"`)
-      debug(`JSDoc TSD command: "${process.execPath}" "${jsdocPath}" --configure "${tsdConfigPath}"`)
-
-      const jsdocJobs = [htmlConfigPath, tsdConfigPath].map(configPath => getExecFile(process.execPath, [jsdocPath, "--configure", configPath], {
-        timeout: 1000 * 120,
-      }))
-      const jsdocResults = await Promise.all(jsdocJobs)
-
-      for (const jsdocResult of jsdocResults) {
-        if (jsdocResult.error) {
-          throw new Error(`JSDoc failed with Error: ${error.message}`)
-        }
-        if (jsdocResult.stderr) {
-          throw new Error(`JSDoc failed with error output: ${jsdocResult.stderr}`)
-        }
+      for (const {name, modulePath, configFactory} of setups) {
+        const configPath = configFactory(compilation, configBase, modulePath, this.options, tempDir)
+        const command = commandJoin([process.execPath, jsdocPath, "--configure", configPath])
+        debug(`JSDoc ${name} command: ${command}`)
+        const out = execSync(command, {
+          timeout: 1000 * 120,
+          cwd: compiler.context,
+          encoding: "utf8",
+        })
+        debug(`JSDoc ${name} output: ${out}`)
       }
 
-      debug(`JSDoc HTML stdout: ${jsdocResults[0].stdout}`)
-      debug(`JSDoc TSD stdout: ${jsdocResults[1].stdout}`)
-
       if (this.options.autoTsdOutputFile) {
+        debug(`Copying ${this.options.autoTsdOutputFile} to ${path.join(compiler.options.output.path, this.options.autoTsdOutputFile |> path.basename)}`)
         const tsdContent = fs.readFileSync(this.options.autoTsdOutputFile)
         compilation.assets[path.basename(this.options.autoTsdOutputFile)] = {
           source: () => tsdContent,

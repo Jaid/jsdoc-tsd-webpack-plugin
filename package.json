@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "author": "Jaid <jaid.jsx@gmail.com> (https://github.com/Jaid)",
   "babel": {
@@ -15,13 +15,14 @@
   },
   "dependencies": {
     "better-docs": "^1.1.2",
+    "command-join": "^2.0.0",
     "debug": "^4.1.1",
     "first-existing-path": "^1.0.1",
+    "get-exec-file": "^1.1.0",
     "jsdoc": "^3.5.5",
     "jsdoc-babel": "^0.5.0",
     "jsdoc-export-default-interop": "^0.3.1",
     "tmp-promise": "^1.0.5",
-    "get-exec-file": "^1.1.0",
     "tsd-jsdoc": "^2.1.2"
   },
   "peerDependencies": {

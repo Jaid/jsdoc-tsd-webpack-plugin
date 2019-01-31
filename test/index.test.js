@@ -24,6 +24,7 @@ const runWebpack = async (name, extraConfig) => {
   }))
   fs.ensureDirSync(path.join(__dirname, name, "info"))
   fs.writeJsonSync(path.join(__dirname, name, "info", "stats.json"), stats.toJson())
+  return stats
 }
 
 it("should run", () => runWebpack("basic", {
@@ -41,26 +42,32 @@ it("should run with publishimo-webpack-plugin", () => runWebpack("with-publishim
   ],
 }))
 
-it("should run with {babel: true}", () => runWebpack("with-babel", {
-  plugins: [
-    new CleanWebpackPlugin,
-    new JsdocTsdWebpackPlugin({
-      babel: {
-        presets: ["jaid"],
-      },
-    }),
-    new PublishimoWebpackPlugin,
-  ],
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules\//,
-        use: {
-          loader: "babel-loader",
-          options: {presets: ["jaid"]},
+it("should run with {babel: true}", async () => {
+  await runWebpack("with-babel", {
+    plugins: [
+      new CleanWebpackPlugin,
+      new JsdocTsdWebpackPlugin({
+        babel: {
+          presets: ["jaid"],
         },
-      },
+      }),
+      new PublishimoWebpackPlugin,
     ],
-  },
-}))
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          exclude: /node_modules\//,
+          use: {
+            loader: "babel-loader",
+            options: {presets: ["jaid"]},
+          },
+        },
+      ],
+    },
+  })
+  const tsdContent = fs.readFileSync(path.join(__dirname, "with-babel", "dist", "main.d.ts"), "utf8")
+  expect(tsdContent).toMatch("declare")
+  const htmlContent = fs.readFileSync(path.join(__dirname, "with-babel", "dist-jsdoc", "with-babel", "1.0.0", "index.html"), "utf8")
+  expect(htmlContent).toMatch("hi (with babel)")
+})
