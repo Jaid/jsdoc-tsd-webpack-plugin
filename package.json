@@ -23,14 +23,15 @@
   },
   "dependencies": {
     "better-docs": "^1.1.2",
+    "command-join": "^2.0.0",
+    "debug": "^4.1.1",
     "first-existing-path": "^1.0.1",
     "jsdoc": "^3.5.5",
     "jsdoc-babel": "^0.5.0",
     "jsdoc-export-default-interop": "^0.3.1",
     "node-exec-promise": "^1.0.2",
     "tmp-promise": "^1.0.5",
-    "tsd-jsdoc": "^2.1.2",
-    "debug": "^4.1.1"
+    "tsd-jsdoc": "^2.1.2"
   },
   "peerDependencies": {
     "webpack": "^4.28.0"

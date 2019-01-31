@@ -6,6 +6,7 @@ import firstExistingPath from "first-existing-path"
 import {exec} from "node-exec-promise"
 import readPkgUp from "read-pkg-up"
 import {isObject} from "lodash"
+import commandJoin from "command-join"
 
 const debug = require("debug")("jsdoc-tsd-webpack-plugin")
 
@@ -163,7 +164,7 @@ export default class {
         getTsdConfigPath(compilation, configBase, tsdModulePath, this.options, tempDir),
       ])
 
-      const jsdocCommands = [htmlConfigPath, tsdConfigPath].map(configPath => `${process.execPath} "${jsdocPath}" --configure "${configPath}"`)
+      const jsdocCommands = [htmlConfigPath, tsdConfigPath].map(configPath => commandJoin([process.execPath, jsdocPath, "--configure", configPath]))
       debug("JSDoc commands", jsdocCommands)
       const jsdocJobs = jsdocCommands.map(command => exec(command))
 
