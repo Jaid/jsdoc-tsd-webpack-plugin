@@ -5,6 +5,7 @@ import webpack from "webpack"
 import pify from "pify"
 import CleanWebpackPlugin from "clean-webpack-plugin"
 import PublishimoWebpackPlugin from "publishimo-webpack-plugin"
+import fsp from "@absolunet/fsp"
 
 import JsdocTsdWebpackPlugin from "../src"
 
@@ -22,8 +23,7 @@ const runWebpack = async (name, extraConfig) => {
     },
     ...extraConfig,
   }))
-  fs.ensureDirSync(path.join(__dirname, name, "info"))
-  fs.writeJsonSync(path.join(__dirname, name, "info", "stats.json"), stats.toJson())
+  await fsp.outputJson5(path.join(__dirname, name, "info", "stats.json5"), stats.toJson(), {space: 2})
   return stats
 }
 
@@ -47,9 +47,7 @@ it("should run with {babel: true}", async () => {
     plugins: [
       new CleanWebpackPlugin,
       new JsdocTsdWebpackPlugin({
-        babel: {
-          presets: ["jaid"],
-        },
+        babel: {presets: ["jaid"]},
       }),
       new PublishimoWebpackPlugin,
     ],
@@ -60,7 +58,6 @@ it("should run with {babel: true}", async () => {
           exclude: /node_modules\//,
           use: {
             loader: "babel-loader",
-            options: {presets: ["jaid"]},
           },
         },
       ],

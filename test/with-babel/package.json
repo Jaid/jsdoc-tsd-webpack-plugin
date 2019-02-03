@@ -3,5 +3,10 @@
   "author": "Jaid <jaid.jsx@gmail.com> (https://github.com/Jaid)",
   "eslintConfig": {
     "extends": "jaid"
+  },
+  "babel": {
+    "presets": [
+      "jaid"
+    ]
   }
 }
