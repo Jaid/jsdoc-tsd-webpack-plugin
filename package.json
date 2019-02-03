@@ -1,10 +1,6 @@
 {
-<<<<<<< HEAD
-  "version": "1.5.0",
-=======
   "version": "2.2.0",
   "private": true,
->>>>>>> 7ca2599edf8aef7c449ef8bc473473293a6d2bdd
   "author": "Jaid <jaid.jsx@gmail.com> (https://github.com/Jaid)",
   "babel": {
     "presets": [
@@ -18,12 +14,7 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-<<<<<<< HEAD
     "better-docs": "^1.1.3",
-=======
-    "better-docs": "^1.1.2",
-    "debug": "^4.1.1",
->>>>>>> 7ca2599edf8aef7c449ef8bc473473293a6d2bdd
     "first-existing-path": "^1.0.1",
     "jsdoc-api": "^4.0.3",
     "jsdoc-babel": "^0.5.0",
