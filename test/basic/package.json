@@ -1,3 +1,7 @@
 {
-  "license": "MIT"
+  "license": "MIT",
+  "author": "Jaid <jaid.jsx@gmail.com> (https://github.com/Jaid)",
+  "eslintConfig": {
+    "extends": "jaid"
+  }
 }

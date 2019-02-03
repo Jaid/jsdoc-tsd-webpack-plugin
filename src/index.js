@@ -3,18 +3,21 @@ import path from "path"
 import fs from "fs-extra"
 import tmpPromise from "tmp-promise"
 import firstExistingPath from "first-existing-path"
-import {exec} from "node-exec-promise"
 import readPkgUp from "read-pkg-up"
+import {isObject} from "lodash"
+import {renderSync} from "jsdoc-api"
+
+const debug = require("debug")("jsdoc-tsd-webpack-plugin")
 
 const webpackId = "JsdocTsdWebpackPlugin"
 
-const getHtmlConfigPath = async (compilation, configBase, template, options, configDir) => {
+const getHtmlConfigPath = (compilation, configBase, template, options, configDir) => {
   const config = {
     ...configBase,
     opts: {
       ...configBase.opts,
       template,
-      destination: options.htmlOutputDir || path.join(compilation.compiler.context, "dist-jsdoc", "html"),
+      destination: options.htmlOutputDir || path.join(compilation.compiler.context, "dist-jsdoc"),
     },
     ...options.jsdocHtmlConfig,
   }
@@ -23,7 +26,7 @@ const getHtmlConfigPath = async (compilation, configBase, template, options, con
   return configPath
 }
 
-const getTsdConfigPath = async (compilation, configBase, template, options, configDir) => {
+const getTsdConfigPath = (compilation, configBase, template, options, configDir) => {
   const config = {
     ...configBase,
     opts: {
@@ -47,6 +50,7 @@ const getTsdConfigPath = async (compilation, configBase, template, options, conf
 export default class {
 
   constructor(options) {
+    debug("User options:", options)
     this.options = {
       htmlOutputDir: null,
       tsdOutputFile: null,
@@ -59,16 +63,19 @@ export default class {
       babel: false,
       ...options,
     }
+    debug("Merged options:", this.options)
   }
 
   apply(compiler) {
     if (this.options.productionOnly && compiler.options.mode !== "production") {
+      debug(`Webpack mode is "${compiler.options.mode}" and not "production", skipping.`)
       return
     }
 
     compiler.hooks.afterPlugins.tap(webpackId, () => {
       compiler.hooks.publishimoGeneratedPkg?.tapPromise(webpackId, async publishimoResult => {
         this.publishimoPkg = publishimoResult.generatedPkg
+        debug("Got info from publishimo:", publishimoResult)
       })
     })
 
@@ -87,6 +94,7 @@ export default class {
       }
 
       const {path: tempDir} = await tmpPromise.dir({prefix: "jsdoc-ts-webpack-plugin-temp-"})
+      debug(`Temp directory: ${tempDir}`)
 
       if (this.options.readmePath) {
         configBase.opts.readme = path.resolve(this.options.readmePath)
@@ -103,25 +111,27 @@ export default class {
         ].map(file => path.resolve(compiler.context, file)))
         if (foundFile) {
           configBase.opts.readme = foundFile
+          debug(`Using readme file ${foundFile}`)
         }
       }
 
       if (this.options.packagePath) {
         configBase.opts.package = path.resolve(this.options.packagePath)
+        debug("Using pkg source", configBase.opts.package)
       } else if (this.publishimoPkg) {
         const publishimoPkgPath = path.join(tempDir, "publishimo-pkg.json")
         fs.outputJsonSync(publishimoPkgPath, this.publishimoPkg)
         configBase.opts.package = publishimoPkgPath
-        console.log(tempDir)
+        debug("Using pkg source", configBase.opts.package)
       } else {
         const {path: foundFile} = await readPkgUp()
         if (foundFile) {
           configBase.opts.package = foundFile
+          debug("Using pkg source", configBase.opts.package)
         }
       }
 
       const findModulesJobs = [
-        "jsdoc/jsdoc.js",
         "tsd-jsdoc/dist",
         "better-docs",
         "jsdoc-export-default-interop/dist/index.js",
@@ -137,31 +147,51 @@ export default class {
         if (!foundFile) {
           throw new Error(`Could not find ${file}. Searched in: ${jsdocPaths}`)
         }
+        debug("Found file", foundFile)
         return foundFile
       })
 
-      const [jsdocPath, tsdModulePath, htmlModulePath, exportDefaultModulePath, jsdocBabelPath] = await Promise.all(findModulesJobs)
+      const [tsdModulePath, htmlModulePath, exportDefaultModulePath, jsdocBabelPath] = await Promise.all(findModulesJobs)
 
       configBase.plugins = [exportDefaultModulePath]
 
-      if (this.options.babel) {
-        configBase.plugins.push(jsdocBabelPath)
+      if (this.options.babel === true) {
+        configBase.plugins = [jsdocBabelPath, ...configBase.plugins]
+      } else if (isObject(this.options.babel)) {
+        configBase.plugins = [jsdocBabelPath, ...configBase.plugins]
+        configBase.babel = this.options.babel
       }
 
       if (!this.options.tsdOutputFile) {
         const tsdFileName = path.basename(compilation.chunks[0].files[0], ".js")
         this.options.autoTsdOutputFile = path.join(tempDir, `${tsdFileName}.d.ts`)
+        debug(`tsd output file should be named ${this.options.autoTsdOutputFile}`)
       }
 
-      const [htmlConfigPath, tsdConfigPath] = await Promise.all([
-        getHtmlConfigPath(compilation, configBase, htmlModulePath, this.options, tempDir),
-        getTsdConfigPath(compilation, configBase, tsdModulePath, this.options, tempDir),
-      ])
+      const setups = [
+        {
+          name: "TSD",
+          modulePath: tsdModulePath,
+          configFactory: getTsdConfigPath,
+        },
+        {
+          name: "HTML",
+          configFactory: getHtmlConfigPath,
+          modulePath: htmlModulePath,
+        },
+      ]
 
-      const jsdocJobs = [htmlConfigPath, tsdConfigPath].map(configPath => exec(`node "${jsdocPath}" --configure "${configPath}"`))
-      await Promise.all(jsdocJobs)
+      for (const {name, modulePath, configFactory} of setups) {
+        const configPath = configFactory(compilation, configBase, modulePath, this.options, tempDir)
+        debug(`${name}: Calling jsdoc-api with entry point ${compiler.options.entry} and configuration ${configPath}`)
+        renderSync({
+          files: compiler.options.entry,
+          configure: configPath,
+        })
+      }
 
       if (this.options.autoTsdOutputFile) {
+        debug(`Copying ${this.options.autoTsdOutputFile} to ${path.join(compiler.outputPath, this.options.autoTsdOutputFile |> path.basename)}`)
         const tsdContent = fs.readFileSync(this.options.autoTsdOutputFile)
         compilation.assets[path.basename(this.options.autoTsdOutputFile)] = {
           source: () => tsdContent,

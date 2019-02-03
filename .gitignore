@@ -24,6 +24,7 @@
 # Testing
 /test/*/dist/
 /test/*/dist-jsdoc/
+/test/*/info/
 
 # IDEs
 /.vscode/
