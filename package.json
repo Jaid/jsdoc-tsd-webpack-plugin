@@ -45,12 +45,12 @@
     "webpack-config-jaid": "1.24.2"
   },
   "scripts": {
-    "clean": "rimraf dist test/*/dist test/*/dist-jsdoc",
-    "build:prod": "NODE_ENV=production webpack",
+    "clean": "rimraf dist dist-jsdoc",
+    "build:prod": "cross-env NODE_ENV=production webpack",
     "build:dev": "webpack",
-    "test": "cross-env NODE_ENV=production jest",
-    "test:dev": "jest",
-    "test:debug": "cross-env DEBUG=$(basename $PWD) babel-node --inspect=9229 node_modules/jest/bin/jest.js --runInBand",
-    "release": "npm run build:prod && npm publish dist && cross-env git tag v$npm_package_version && git push --tags && cross-env opn https://github.com/$npm_package_author_name/$(basename $PWD)/releases/new?tag=v$npm_package_version"
+    "test": "jest && npm run build:prod && cross-env MAIN=dist jest",
+    "test:dev": "npm run build:dev && jest",
+    "test:debug": "node --inspect=9229 node_modules/jest/bin/jest.js --runInBand",
+    "release": "npm test && cross-env git tag v$npm_package_version && git push --tags && cross-env opn https://github.com/$npm_package_author_name/$(basename $PWD)/releases/new?tag=v$npm_package_version"
   }
 }
