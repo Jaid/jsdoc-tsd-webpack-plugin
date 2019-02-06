@@ -23,7 +23,10 @@ const getHtmlConfigPath = (compilation, configBase, template, options, configDir
   }
   const configPath = path.join(configDir, "jsdoc-config-html.json")
   fs.writeJsonSync(configPath, config)
-  return configPath
+  return {
+    configPath,
+    config,
+  }
 }
 
 const getTsdConfigPath = (compilation, configBase, template, options, configDir) => {
@@ -44,7 +47,10 @@ const getTsdConfigPath = (compilation, configBase, template, options, configDir)
   }
   const configPath = path.join(configDir, "jsdoc-config-tsd.json")
   fs.writeJsonSync(configPath, config)
-  return configPath
+  return {
+    configPath,
+    config,
+  }
 }
 
 export default class {
@@ -182,17 +188,23 @@ export default class {
       ]
 
       for (const {name, modulePath, configFactory} of setups) {
-        const configPath = configFactory(compilation, configBase, modulePath, this.options, tempDir)
+        const {configPath, config} = configFactory(compilation, configBase, modulePath, this.options, tempDir)
         debug(`${name}: Calling jsdoc-api with entry point ${compiler.options.entry} and configuration ${configPath}`)
         renderSync({
           files: compiler.options.entry,
           configure: configPath,
         })
+        if (!fs.existsSync(config.opts.destination)) {
+          throw new Error(`JSDoc for ${name} has run without any error, but ${config.opts.destination} does not exist!`)
+        }
       }
 
       if (this.options.autoTsdOutputFile) {
         debug(`Copying ${this.options.autoTsdOutputFile} to ${path.join(compiler.outputPath, this.options.autoTsdOutputFile |> path.basename)}`)
-        const tsdContent = fs.readFileSync(this.options.autoTsdOutputFile)
+        const tsdContent = fs.readFileSync(this.options.autoTsdOutputFile, "utf8")
+        if (!tsdContent.trim().length) {
+          throw new Error(`TSD file ${this.options.autoTsdOutputFile} is empty!`)
+        }
         compilation.assets[path.basename(this.options.autoTsdOutputFile)] = {
           source: () => tsdContent,
           size: () => tsdContent.length,
