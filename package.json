@@ -45,7 +45,7 @@
     "webpack-config-jaid": "1.24.2"
   },
   "scripts": {
-    "clean": "rimraf dist dist-jsdoc",
+    "clean": "rimraf dist dist-jsdoc test/*/dist test/*/dist-jsdoc test/*/info",
     "build:prod": "cross-env NODE_ENV=production webpack",
     "build:dev": "webpack",
     "test": "jest && npm run build:prod && cross-env MAIN=dist jest",
