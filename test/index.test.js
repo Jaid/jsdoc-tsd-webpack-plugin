@@ -13,7 +13,7 @@ const {default: JsdocTsdWebpackPlugin} = indexModule
 jest.setTimeout(60 * 1000)
 
 const runWebpack = async (name, extraConfig) => {
-  const stats = await (pify(webpack)({
+  const stats = await pify(webpack)({
     target: "node",
     mode: "production",
     devtool: "inline-source-map",
@@ -23,7 +23,7 @@ const runWebpack = async (name, extraConfig) => {
       path: path.join(__dirname, name, "dist"),
     },
     ...extraConfig,
-  }))
+  })
   await fsp.outputJson5(path.join(__dirname, name, "info", "stats.json5"), stats.toJson(), {space: 2})
   return stats
 }
@@ -48,7 +48,12 @@ it("should run with {babel: true}", async () => {
     plugins: [
       new CleanWebpackPlugin,
       new JsdocTsdWebpackPlugin({
-        babel: {presets: ["jaid"]},
+        babel: {
+          presets: ["jaid"],
+        },
+        jsdocTsdConfig: {
+          pedantic: true,
+        },
       }),
       new PublishimoWebpackPlugin,
     ],
@@ -56,9 +61,10 @@ it("should run with {babel: true}", async () => {
       rules: [
         {
           test: /\.js$/,
-          exclude: /node_modules\//,
+          include: /src\//,
           use: {
             loader: "babel-loader",
+            options: {presets: ["jaid"]},
           },
         },
       ],
