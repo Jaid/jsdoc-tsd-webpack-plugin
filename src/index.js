@@ -92,10 +92,6 @@ export default class {
           encoding: "utf8",
         },
         sourceType: "module",
-        source: {
-          include: compilation.entries.map(entry => entry.context),
-          includePattern: ".(ts|js|jsx)$",
-        },
         ...this.options.jsdocConfig,
       }
 
