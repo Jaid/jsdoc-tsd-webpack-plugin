@@ -185,9 +185,11 @@ export default class {
 
       for (const {name, modulePath, configFactory} of setups) {
         const {configPath, config} = configFactory(compilation, configBase, modulePath, this.options, tempDir)
+        const files = compiler.options.entry
         debug(`${name}: Calling jsdoc-api with entry point ${compiler.options.entry} and configuration ${configPath}`)
+        debug(`${name}: Files: ${files}`)
         renderSync({
-          files: compiler.options.entry,
+          files,
           configure: configPath,
         })
         if (!fs.existsSync(config.opts.destination)) {
