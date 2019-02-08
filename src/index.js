@@ -160,12 +160,11 @@ export default class {
       if (this.options.babel) {
         configBase.plugins.unshift(jsdocBabelPath)
         const babelConfig = {
+          caller: {name: "jsdoc-tsd-webpack-plugin"},
           cwd: compiler.context,
           root: compiler.context,
           comments: true,
-          env: {
-            NODE_ENV: "development",
-          },
+          envName: "development",
           ...(isObject(this.options.babel) ? this.options.babel : undefined),
         }
         configBase.babel = babelConfig
@@ -193,6 +192,7 @@ export default class {
       for (const {name, modulePath, configFactory} of setups) {
         const {configPath, config} = configFactory(compilation, configBase, modulePath, this.options, tempDir)
         debug(`${name}: Calling jsdoc-api with entry point ${compiler.options.entry} and configuration ${configPath}`)
+        debug(`CLI equivalent: DEBUG=* ${path.join(compiler.context, "node_modules", ".bin", "jsdoc")} --verbose --configure ${configPath} ${compiler.options.entry}`)
         renderSync({
           files: compiler.options.entry,
           configure: configPath,
