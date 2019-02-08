@@ -157,11 +157,18 @@ export default class {
 
       configBase.plugins = [exportDefaultModulePath]
 
-      if (this.options.babel === true) {
-        configBase.plugins = [jsdocBabelPath, ...configBase.plugins]
-      } else if (isObject(this.options.babel)) {
-        configBase.plugins = [jsdocBabelPath, ...configBase.plugins]
-        configBase.babel = this.options.babel
+      if (this.options.babel) {
+        configBase.plugins.unshift(jsdocBabelPath)
+        const babelConfig = {
+          cwd: compiler.context,
+          root: compiler.context,
+          comments: true,
+          env: {
+            NODE_ENV: "development",
+          },
+          ...(isObject(this.options.babel) ? this.options.babel : undefined),
+        }
+        configBase.babel = babelConfig
       }
 
       if (!this.options.tsdOutputFile) {
