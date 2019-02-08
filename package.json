@@ -14,6 +14,7 @@
     "testEnvironment": "node"
   },
   "dependencies": {
+    "@absolunet/fss": "^1.4.0",
     "better-docs": "^1.1.4",
     "debug": "^4.1.1",
     "first-existing-path": "^1.0.1",
@@ -46,7 +47,7 @@
     "webpack-config-jaid": "1.25.2"
   },
   "scripts": {
-    "clean": "rimraf dist dist-jsdoc test/*/dist test/*/dist-jsdoc test/*/info",
+    "clean": "rimraf dist test/*/dist test/*/info",
     "build:prod": "cross-env NODE_ENV=production webpack",
     "build:dev": "webpack",
     "test": "jest && npm run build:prod && cross-env MAIN=dist jest",

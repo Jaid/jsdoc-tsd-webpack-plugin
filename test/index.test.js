@@ -20,11 +20,11 @@ const runWebpack = async (name, extraConfig) => {
     context: path.join(__dirname, name),
     entry: path.join(__dirname, name, "src"),
     output: {
-      path: path.join(__dirname, name, "dist"),
+      path: path.join(__dirname, name, "dist", "package"),
     },
     ...extraConfig,
   })
-  await fsp.outputJson5(path.join(__dirname, name, "info", "stats.json5"), stats.toJson(), {space: 2})
+  await fsp.outputJson5(path.join(__dirname, name, "dist", "stats.json5"), stats.toJson(), {space: 2})
   return stats
 }
 
@@ -70,8 +70,8 @@ it("should run with {babel: true}", async () => {
       ],
     },
   })
-  const tsdContent = fs.readFileSync(path.join(__dirname, "with-babel", "dist", "main.d.ts"), "utf8")
+  const tsdContent = fs.readFileSync(path.join(__dirname, "with-babel", "dist", "package", "main.d.ts"), "utf8")
   expect(tsdContent).toMatch("declare")
-  const htmlContent = fs.readFileSync(path.join(__dirname, "with-babel", "dist-jsdoc", "with-babel", "1.0.0", "index.html"), "utf8")
+  const htmlContent = fs.readFileSync(path.join(__dirname, "with-babel", "dist", "homepage", "with-babel", "1.0.0", "index.html"), "utf8")
   expect(htmlContent).toMatch("hi (with babel)")
 })
