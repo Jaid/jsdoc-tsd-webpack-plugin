@@ -185,11 +185,9 @@ export default class {
 
       for (const {name, modulePath, configFactory} of setups) {
         const {configPath, config} = configFactory(compilation, configBase, modulePath, this.options, tempDir)
-        const files = compiler.options.entry
         debug(`${name}: Calling jsdoc-api with entry point ${compiler.options.entry} and configuration ${configPath}`)
-        debug(`${name}: Files: ${files}`)
         renderSync({
-          files,
+          files: compiler.options.entry,
           configure: configPath,
         })
         if (!fs.existsSync(config.opts.destination)) {
@@ -198,11 +196,11 @@ export default class {
       }
 
       if (this.options.autoTsdOutputFile) {
-        debug(`Copying ${this.options.autoTsdOutputFile} to ${path.join(compiler.outputPath, this.options.autoTsdOutputFile |> path.basename)}`)
         const tsdContent = fs.readFileSync(this.options.autoTsdOutputFile, "utf8")
         if (!tsdContent.trim().length) {
           throw new Error(`TSD file ${this.options.autoTsdOutputFile} is empty!`)
         }
+        debug(`Copying ${this.options.autoTsdOutputFile} to ${path.join(compiler.outputPath, this.options.autoTsdOutputFile |> path.basename)}`)
         compilation.assets[path.basename(this.options.autoTsdOutputFile)] = {
           source: () => tsdContent,
           size: () => tsdContent.length,
