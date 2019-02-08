@@ -1,3 +1,5 @@
+/** @module jsdoc-tsd-webpack-plugin */
+
 import path from "path"
 
 import fs from "fs-extra"
@@ -53,6 +55,9 @@ const getTsdConfigPath = (compilation, configBase, template, options, configDir)
   }
 }
 
+/**
+ * @class
+ */
 export default class {
 
   constructor(options) {
