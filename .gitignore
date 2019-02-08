@@ -20,11 +20,9 @@
 # Generated or temporary content
 /dist/
 /dist-jsdoc/
-
-# Testing
 /test/*/dist/
 /test/*/dist-jsdoc/
-/test/*/info/
+test/*/info/
 
 # IDEs
 /.vscode/

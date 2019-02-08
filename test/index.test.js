@@ -5,13 +5,15 @@ import webpack from "webpack"
 import pify from "pify"
 import CleanWebpackPlugin from "clean-webpack-plugin"
 import PublishimoWebpackPlugin from "publishimo-webpack-plugin"
+import fsp from "@absolunet/fsp"
 
-import JsdocTsdWebpackPlugin from "../src"
+const indexModule = (process.env.MAIN ? path.resolve(process.env.MAIN) : path.join(__dirname, "..", "src")) |> require
+const {default: JsdocTsdWebpackPlugin} = indexModule
 
 jest.setTimeout(60 * 1000)
 
 const runWebpack = async (name, extraConfig) => {
-  const stats = await (pify(webpack)({
+  const stats = await pify(webpack)({
     target: "node",
     mode: "production",
     devtool: "inline-source-map",
@@ -21,9 +23,8 @@ const runWebpack = async (name, extraConfig) => {
       path: path.join(__dirname, name, "dist"),
     },
     ...extraConfig,
-  }))
-  fs.ensureDirSync(path.join(__dirname, name, "info"))
-  fs.writeJsonSync(path.join(__dirname, name, "info", "stats.json"), stats.toJson())
+  })
+  await fsp.outputJson5(path.join(__dirname, name, "info", "stats.json5"), stats.toJson(), {space: 2})
   return stats
 }
 
@@ -50,6 +51,9 @@ it("should run with {babel: true}", async () => {
         babel: {
           presets: ["jaid"],
         },
+        jsdocTsdConfig: {
+          pedantic: true,
+        },
       }),
       new PublishimoWebpackPlugin,
     ],
@@ -57,7 +61,7 @@ it("should run with {babel: true}", async () => {
       rules: [
         {
           test: /\.js$/,
-          exclude: /node_modules\//,
+          include: /src\//,
           use: {
             loader: "babel-loader",
             options: {presets: ["jaid"]},

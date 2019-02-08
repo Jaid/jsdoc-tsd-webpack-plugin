@@ -1,5 +1,5 @@
 {
-  "version": "2.2.0",
+  "version": "2.2.2",
   "private": true,
   "author": "Jaid <jaid.jsx@gmail.com> (https://github.com/Jaid)",
   "babel": {
@@ -24,12 +24,13 @@
     "tsd-jsdoc": "^2.1.3"
   },
   "peerDependencies": {
-    "webpack": "^4.29.3"
+    "webpack": "^4.29.1"
   },
   "optionalDependencies": {
     "publishimo-webpack-plugin": "1.9.0"
   },
   "devDependencies": {
+    "@absolunet/fsp": "^1.4.0",
     "babel-jest": "^24.1.0",
     "babel-preset-jaid": "^2.9.0",
     "clean-webpack-plugin": "^1.0.1",
@@ -40,17 +41,17 @@
     "opn-cli": "^4.0.0",
     "publishimo-webpack-plugin": "1.9.0",
     "rimraf": "^2.6.3",
-    "webpack": "^4.29.3",
+    "webpack": "^4.29.1",
     "webpack-cli": "^3.2.3",
-    "webpack-config-jaid": "1.25.2"
+    "webpack-config-jaid": "1.24.2"
   },
   "scripts": {
-    "clean": "rimraf dist test/*/dist test/*/dist-jsdoc",
-    "build:prod": "NODE_ENV=production webpack",
+    "clean": "rimraf dist dist-jsdoc test/*/dist test/*/dist-jsdoc test/*/info",
+    "build:prod": "cross-env NODE_ENV=production webpack",
     "build:dev": "webpack",
-    "test": "cross-env NODE_ENV=production jest",
+    "test": "jest && npm run build:prod && cross-env MAIN=dist jest",
     "test:dev": "jest",
-    "test:debug": "cross-env DEBUG=$(basename $PWD) babel-node --inspect=9229 node_modules/jest/bin/jest.js --runInBand",
-    "release": "npm run build:prod && npm publish dist && cross-env git tag v$npm_package_version && git push --tags && cross-env opn https://github.com/$npm_package_author_name/$(basename $PWD)/releases/new?tag=v$npm_package_version"
+    "test:debug": "cross-env DEBUG=$(basename $PWD) cross-env node --inspect node_modules/jest/bin/jest.js --runInBand",
+    "release": "npm test && cross-env git tag v$npm_package_version && git push --tags && cross-env opn https://github.com/$npm_package_author_name/$(basename $PWD)/releases/new?tag=v$npm_package_version"
   }
 }
