@@ -14,35 +14,35 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "better-docs": "^1.1.2",
+    "better-docs": "^1.1.4",
     "debug": "^4.1.1",
     "first-existing-path": "^1.0.1",
     "jsdoc-api": "^4.0.3",
     "jsdoc-babel": "^0.5.0",
     "jsdoc-export-default-interop": "^0.3.1",
     "tmp-promise": "^1.0.5",
-    "tsd-jsdoc": "^2.1.2"
+    "tsd-jsdoc": "^2.1.3"
   },
   "peerDependencies": {
-    "webpack": "^4.29.0"
+    "webpack": "^4.29.3"
   },
   "optionalDependencies": {
-    "publishimo-webpack-plugin": "1.8.1"
+    "publishimo-webpack-plugin": "1.9.0"
   },
   "devDependencies": {
-    "babel-jest": "^24.0.0",
-    "babel-preset-jaid": "^2.8.0",
+    "babel-jest": "^24.1.0",
+    "babel-preset-jaid": "^2.9.0",
     "clean-webpack-plugin": "^1.0.1",
     "cross-env": "^5.2.0",
-    "eslint": "^5.12.1",
+    "eslint": "^5.13.0",
     "eslint-config-jaid": "^1.11.0",
-    "jest": "^24.0.0",
+    "jest": "^24.1.0",
     "opn-cli": "^4.0.0",
-    "publishimo-webpack-plugin": "1.8.1",
+    "publishimo-webpack-plugin": "1.9.0",
     "rimraf": "^2.6.3",
-    "webpack": "^4.29.0",
-    "webpack-cli": "^3.2.1",
-    "webpack-config-jaid": "1.24.1"
+    "webpack": "^4.29.3",
+    "webpack-cli": "^3.2.3",
+    "webpack-config-jaid": "1.25.2"
   },
   "scripts": {
     "clean": "rimraf dist test/*/dist test/*/dist-jsdoc",
