@@ -28,23 +28,23 @@
     "webpack": "^4.29.3"
   },
   "optionalDependencies": {
-    "publishimo-webpack-plugin": "1.9.0"
+    "publishimo-webpack-plugin": "1.11.0"
   },
   "devDependencies": {
     "@absolunet/fsp": "^1.4.0",
     "babel-jest": "^24.1.0",
-    "babel-preset-jaid": "^2.9.0",
+    "babel-preset-jaid": "^2.10.0",
     "clean-webpack-plugin": "^1.0.1",
     "cross-env": "^5.2.0",
     "eslint": "^5.13.0",
     "eslint-config-jaid": "^1.11.0",
     "jest": "^24.1.0",
     "opn-cli": "^4.0.0",
-    "publishimo-webpack-plugin": "1.9.0",
+    "publishimo-webpack-plugin": "1.11.0",
     "rimraf": "^2.6.3",
     "webpack": "^4.29.3",
     "webpack-cli": "^3.2.3",
-    "webpack-config-jaid": "1.25.2"
+    "webpack-config-jaid": "1.27.0"
   },
   "scripts": {
     "clean": "rimraf dist test/*/dist test/*/info",
