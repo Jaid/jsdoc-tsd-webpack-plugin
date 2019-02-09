@@ -1,10 +1,6 @@
-import webpackConfigJaid from "webpack-config-jaid"
+import {configureLibClass} from "webpack-config-jaid"
 
-export default webpackConfigJaid({
-  type: "libClass",
-  publishimo: {
-    publishimoOptions: {
-      fetchGithub: true,
-    },
-  },
+export default configureLibClass({
+  documentation: {babel: true},
+  publishimo: {fetchGithub: true},
 })
