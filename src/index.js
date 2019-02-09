@@ -9,6 +9,8 @@ import {isObject} from "lodash"
 import {renderSync} from "jsdoc-api"
 import fss from "@absolunet/fss"
 
+import transformTsd from "./transformTsd"
+
 const debug = require("debug")("jsdoc-tsd-webpack-plugin")
 
 const webpackId = "JsdocTsdWebpackPlugin"
@@ -71,6 +73,7 @@ export default class {
       jsdocHtmlConfig: {},
       jsdocTsdConfig: {},
       productionOnly: true,
+      injectTsdExports: true,
       babel: false,
       ...options,
     }
@@ -186,6 +189,13 @@ export default class {
           name: "TSD",
           modulePath: tsdModulePath,
           configFactory: getTsdConfigPath,
+          postProcess: config => {
+            if (this.options.injectTsdExports) {
+              const tsdPath = path.join(config.opts.destination, config.opts.outFile)
+              const text = fss.readFile(tsdPath, "utf8") |> transformTsd
+              fss.writeFile(tsdPath, text)
+            }
+          },
         },
         {
           name: "HTML",
@@ -194,7 +204,7 @@ export default class {
         },
       ]
 
-      for (const {name, modulePath, configFactory} of setups) {
+      for (const {name, modulePath, configFactory, postProcess} of setups) {
         const {configPath, config} = configFactory(compilation, configBase, modulePath, this.options, tempDir)
         debug(`${name}: Calling jsdoc-api with entry point ${compiler.options.entry} and configuration ${configPath}`)
         debug(`CLI equivalent: DEBUG=* ${path.join(compiler.context, "node_modules", ".bin", "jsdoc")} --verbose --configure ${configPath} ${compiler.options.entry}`)
@@ -203,6 +213,7 @@ export default class {
           files: compiler.options.entry,
           configure: configPath,
         })
+        postProcess?.(config)
         if (!fss.pathExists(config.opts.destination)) {
           throw new Error(`JSDoc for ${name} has run without any error, but ${config.opts.destination} does not exist!`)
         }
