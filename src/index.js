@@ -213,10 +213,10 @@ export default class {
           files: compiler.options.entry,
           configure: configPath,
         })
-        postProcess?.(config)
         if (!fss.pathExists(config.opts.destination)) {
           throw new Error(`JSDoc for ${name} has run without any error, but ${config.opts.destination} does not exist!`)
         }
+        postProcess?.(config)
       }
 
       if (this.options.autoTsdOutputFile) {
