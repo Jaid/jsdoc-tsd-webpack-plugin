@@ -7,8 +7,8 @@ import CleanWebpackPlugin from "clean-webpack-plugin"
 import PublishimoWebpackPlugin from "publishimo-webpack-plugin"
 import fsp from "@absolunet/fsp"
 
-const indexModule = (process.env.MAIN ? path.resolve(process.env.MAIN) : path.join(__dirname, "..", "src")) |> require
-const {default: JsdocTsdWebpackPlugin} = indexModule
+const indexModule = (process.env.MAIN ? path.resolve(__dirname, "..", process.env.MAIN) : path.join(__dirname, "..", "src"))
+const {default: JsdocTsdWebpackPlugin} = require(indexModule)
 
 jest.setTimeout(60 * 1000)
 
