@@ -15,7 +15,7 @@ export default text => text.replace(moduleBlockRegex, (blockMatch, blockPrefix, 
   const newContent = blockContent.replace(moduleFieldRegex, (fieldMatch, fieldPrefix, fieldType, fieldName) => {
     const transformedField = transformField(fieldType, fieldName)
     debug(`Transformed "${fieldType} ${fieldName}" to "${transformedField}"`)
-    return fieldPrefix + transformField
+    return fieldPrefix + transformedField
   })
   return blockPrefix + newContent + blockSuffix
 })
