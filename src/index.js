@@ -209,8 +209,8 @@ export default class {
       }
 
       if (this.options.autoTsdOutputFile) {
-        const tsdContent = fss.readFile(this.options.autoTsdOutputFile, "utf8")
-        if (!tsdContent.trim().length) {
+        const tsdContent = fss.readFile(this.options.autoTsdOutputFile, "utf8").trim()
+        if (!tsdContent.length) {
           throw new Error(`TSD file ${this.options.autoTsdOutputFile} is empty!`)
         }
         debug(`Copying ${this.options.autoTsdOutputFile} to ${path.join(compiler.outputPath, this.options.autoTsdOutputFile |> path.basename)}`)
