@@ -1,10 +1,10 @@
 const moduleBlockRegex = /(declare module [^\n]+)(.+?)(\n})/gs
-const moduleFieldRegex = /^([\t ]*)(type|function|interface|var|const|class) +(\w+)/gm
+const moduleFieldRegex = /^([\t ]*)(type|function|interface|var|const|class) +(a-zA-Z0-9_\$+)/gm
 
 const debug = require("debug")("jsdoc-tsd-webpack-plugin")
 
 const transformField = (type, name) => {
-  if (name === "default") {
+  if (name === "default" || name === "_default") {
     return `export default ${type}`
   } else {
     return `export ${type} ${name}`
