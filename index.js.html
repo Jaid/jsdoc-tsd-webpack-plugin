@@ -1,0 +1,326 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>JSDoc: index.js</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link href="https://fonts.googleapis.com/css?family=Muli:100,400,700|Oswald:300|Inconsolata,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+</head>
+
+<body>
+    <div id="stickyNavbarOverlay"></div>
+    <div class="top-navbar">
+        <div class="container">
+            <nav class="navbar" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                    
+                    
+                        <h1 class="navbar-item">Documentation</h1>
+                    
+                    <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                    </a>
+                </div>
+                
+            </nav>
+        </div>
+    </div>
+    <div class="container">
+        <div class="columns">
+            <div class="column is-3" id="sidebarNav">
+                <div class="sidebar">
+                    <nav>
+                        <h2><a href="index.html">Home</a></h2><div class="category"><h3>Modules</h3><ul><li><a href="module-jsdoc-tsd-webpack-plugin.html">jsdoc-tsd-webpack-plugin</a></li></ul><h3>Classes</h3><ul><li><a href="module-jsdoc-tsd-webpack-plugin-_default.html">_default</a></li></ul></div>
+                    </nav>
+                </div>
+            </div>
+            <div class="column is-9-desktop">
+                <div class="content" id="main-content-wrapper">
+                    <header class="page-title">
+                        <p>Source</p>
+                        <h1>index.js</h1>
+                    </header>
+                    
+                    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** @module jsdoc-tsd-webpack-plugin */
+
+import path from "path"
+
+import tmpPromise from "tmp-promise"
+import firstExistingPath from "first-existing-path"
+import readPkgUp from "read-pkg-up"
+import {isObject} from "lodash"
+import {renderSync} from "jsdoc-api"
+import fss from "@absolunet/fss"
+
+import transformTsd from "./transformTsd"
+
+const debug = require("debug")("jsdoc-tsd-webpack-plugin")
+
+const webpackId = "JsdocTsdWebpackPlugin"
+
+const getHtmlConfigPath = (compilation, configBase, template, options, configDir) => {
+  const config = {
+    ...configBase,
+    opts: {
+      ...configBase.opts,
+      template,
+      destination: options.htmlOutputDir || path.join(compilation.compiler.context, "dist", "homepage"),
+    },
+    ...options.jsdocHtmlConfig,
+  }
+  const configPath = path.join(configDir, "jsdoc-config-html.json")
+  fss.outputJson(configPath, config)
+  return {
+    configPath,
+    config,
+  }
+}
+
+const getTsdConfigPath = (compilation, configBase, template, options, configDir) => {
+  const config = {
+    ...configBase,
+    opts: {
+      ...configBase.opts,
+      template,
+    },
+    ...options.jsdocTsdConfig,
+  }
+  if (options.tsdOutputFile) {
+    config.opts.destination = path.dirname(options.tsdOutputFile)
+    config.opts.outFile = path.basename(options.tsdOutputFile)
+  } else {
+    config.opts.destination = path.dirname(options.autoTsdOutputFile)
+    config.opts.outFile = path.basename(options.autoTsdOutputFile)
+  }
+  const configPath = path.join(configDir, "jsdoc-config-tsd.json")
+  fss.outputJson(configPath, config)
+  return {
+    configPath,
+    config,
+  }
+}
+
+/**
+ * @class
+ */
+export default class {
+
+  constructor(options) {
+    debug("User options:", options)
+    this.options = {
+      htmlOutputDir: null,
+      tsdOutputFile: null,
+      readmePath: null,
+      packagePath: null,
+      jsdocConfig: {},
+      jsdocHtmlConfig: {},
+      jsdocTsdConfig: {},
+      productionOnly: true,
+      injectTsdExports: true,
+      babel: false,
+      ...options,
+    }
+    debug("Merged options:", this.options)
+  }
+
+  apply(compiler) {
+    if (this.options.productionOnly &amp;&amp; compiler.options.mode !== "production") {
+      debug(`Webpack mode is "${compiler.options.mode}" and not "production", skipping.`)
+      return
+    }
+
+    compiler.hooks.afterPlugins.tap(webpackId, () => {
+      compiler.hooks.publishimoGeneratedPkg?.tapPromise(webpackId, async publishimoResult => {
+        this.publishimoPkg = publishimoResult.generatedPkg
+        debug("Got info from publishimo:", publishimoResult)
+      })
+    })
+
+    compiler.hooks.emit.tapPromise(webpackId, async compilation => {
+      const configBase = {
+        opts: {
+          recurse: true,
+          encoding: "utf8",
+        },
+        sourceType: "module",
+        ...this.options.jsdocConfig,
+      }
+
+      const {path: tempDir} = await tmpPromise.dir({prefix: "jsdoc-ts-webpack-plugin-temp-"})
+      debug(`Temp directory: ${tempDir}`)
+
+      if (this.options.readmePath) {
+        configBase.opts.readme = path.resolve(this.options.readmePath)
+      } else {
+        const foundFile = await firstExistingPath([
+          "README.MD",
+          "README.md",
+          "README.TXT",
+          "README.txt",
+          "readme.MD",
+          "readme.md",
+          "readme.TXT",
+          "readme.txt",
+        ].map(file => path.resolve(compiler.context, file)))
+        if (foundFile) {
+          configBase.opts.readme = foundFile
+          debug(`Using readme file ${foundFile}`)
+        }
+      }
+
+      if (this.options.packagePath) {
+        configBase.opts.package = path.resolve(this.options.packagePath)
+        debug("Using pkg source", configBase.opts.package)
+      } else if (this.publishimoPkg) {
+        const publishimoPkgPath = path.join(tempDir, "publishimo-pkg.json")
+        fss.outputJson(publishimoPkgPath, this.publishimoPkg)
+        configBase.opts.package = publishimoPkgPath
+        debug("Using pkg source", configBase.opts.package)
+      } else {
+        const {path: foundFile} = await readPkgUp()
+        if (foundFile) {
+          configBase.opts.package = foundFile
+          debug("Using pkg source", configBase.opts.package)
+        }
+      }
+
+      const findModulesJobs = [
+        "tsd-jsdoc/dist",
+        "better-docs",
+        "jsdoc-export-default-interop/dist/index.js",
+        "jsdoc-babel/lib/index.js",
+      ].map(async file => {
+        const possiblePaths = [
+          path.resolve(compiler.context, "node_modules", file),
+          path.resolve(compiler.context, compiler.options.resolve.modules[0], file),
+          path.resolve("node_modules", file),
+          path.resolve(__dirname, "node_modules", file),
+        ]
+        const foundFile = await firstExistingPath(possiblePaths)
+        if (!foundFile) {
+          throw new Error(`Could not find ${file}. Searched in: ${jsdocPaths}`)
+        }
+        debug("Found file", foundFile)
+        return foundFile
+      })
+
+      const [tsdModulePath, htmlModulePath, exportDefaultModulePath, jsdocBabelPath] = await Promise.all(findModulesJobs)
+
+      configBase.plugins = [exportDefaultModulePath]
+
+      if (this.options.babel) {
+        configBase.plugins.unshift(jsdocBabelPath)
+        const babelConfig = {
+          caller: {name: "jsdoc-tsd-webpack-plugin"},
+          cwd: compiler.context,
+          root: compiler.context,
+          comments: true,
+          envName: "development",
+          ...(isObject(this.options.babel) ? this.options.babel : undefined),
+        }
+        configBase.babel = babelConfig
+      }
+
+      if (!this.options.tsdOutputFile) {
+        const tsdBasename = path.basename(compilation.chunks[0].files[0], ".js")
+        this.options.autoTsdOutputFile = path.join(compiler.context, "dist", "tsd", `${tsdBasename}.d.ts`)
+        debug(`tsd output file should be named ${this.options.autoTsdOutputFile}`)
+      }
+
+      const setups = [
+        {
+          name: "TSD",
+          modulePath: tsdModulePath,
+          configFactory: getTsdConfigPath,
+          postProcess: config => {
+            if (this.options.injectTsdExports) {
+              const tsdPath = path.join(config.opts.destination, config.opts.outFile)
+              const text = fss.readFile(tsdPath, "utf8") |> transformTsd
+              fss.writeFile(tsdPath, text)
+            }
+          },
+        },
+        {
+          name: "HTML",
+          configFactory: getHtmlConfigPath,
+          modulePath: htmlModulePath,
+        },
+      ]
+
+      for (const {name, modulePath, configFactory, postProcess} of setups) {
+        const {configPath, config} = configFactory(compilation, configBase, modulePath, this.options, tempDir)
+        debug(`${name}: Calling jsdoc-api with entry point ${compiler.options.entry} and configuration ${configPath}`)
+        debug(`CLI equivalent: DEBUG=* ${path.join(compiler.context, "node_modules", ".bin", "jsdoc")} --verbose --configure ${configPath} ${compiler.options.entry}`)
+        fss.ensureDir(config.opts.destination)
+        renderSync({
+          files: compiler.options.entry,
+          configure: configPath,
+        })
+        if (!fss.pathExists(config.opts.destination)) {
+          throw new Error(`JSDoc for ${name} has run without any error, but ${config.opts.destination} does not exist!`)
+        }
+        postProcess?.(config)
+      }
+
+      if (this.options.autoTsdOutputFile) {
+        const tsdContent = fss.readFile(this.options.autoTsdOutputFile, "utf8").trim()
+        if (!tsdContent.length) {
+          throw new Error(`TSD file ${this.options.autoTsdOutputFile} is empty!`)
+        }
+        debug(`Copying ${this.options.autoTsdOutputFile} to ${path.join(compiler.outputPath, this.options.autoTsdOutputFile |> path.basename)}`)
+        compilation.assets[path.basename(this.options.autoTsdOutputFile)] = {
+          source: () => tsdContent,
+          size: () => tsdContent.length,
+        }
+      }
+    })
+  }
+
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+<footer class="footer">
+    <div class="content has-text-centered">
+        <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Feb 15 2019 13:54:24 GMT+0000 (Coordinated Universal Time)</p>
+        <p class="sidebar-created-by">
+            <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by 
+            <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers</a>
+        </p>
+    </div>
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/app.min.js"></script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
