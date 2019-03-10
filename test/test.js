@@ -61,7 +61,7 @@ it("should run with {babel: true}", async () => {
       rules: [
         {
           test: /\.js$/,
-          include: /src\//,
+          include: /src(\/|\\)/,
           use: {
             loader: "babel-loader",
             options: {presets: ["jaid"]},
