@@ -1,6 +1,6 @@
-import {configureNodeClass} from "webpack-config-jaid"
+import configure from "webpack-config-jaid"
 
-export default configureNodeClass({
+export default configure({
   documentation: {babel: true},
   publishimo: {fetchGithub: true},
 })
