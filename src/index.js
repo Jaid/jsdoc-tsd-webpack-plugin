@@ -11,7 +11,7 @@ import fss from "@absolunet/fss"
 
 import transformTsd from "./transformTsd"
 
-const debug = require("debug")("jsdoc-tsd-webpack-plugin")
+const debug = require("debug")(_PKG_NAME)
 
 const webpackId = "JsdocTsdWebpackPlugin"
 
@@ -173,7 +173,7 @@ export default class {
           root: compiler.context,
           comments: true,
           envName: "development",
-          ...(isObject(this.options.babel) ? this.options.babel : undefined),
+          ...isObject(this.options.babel) ? this.options.babel : undefined,
         }
         configBase.babel = babelConfig
       }
