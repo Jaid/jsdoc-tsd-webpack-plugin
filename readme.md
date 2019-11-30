@@ -1,3 +1,3 @@
-# Coming soon!
+## jsdoc-tsd-webpack-plugin
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/Jaid/jsdoc-tsd-webpack-plugin.svg)](https://greenkeeper.io/)
+
