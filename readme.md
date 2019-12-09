@@ -4,31 +4,16 @@
 Generates project homepages and a TypeScript definition files with Webpack.
 
 ## Installation
-<a href='https://npmjs.com/package/jsdoc-tsd-webpack-plugin'><img alt='npm logo' src='https://raw.githubusercontent.com/npm/logos/master/npm%20logo/npm-logo-red.png' height=16/></a>
+<a href='https://npmjs.com/package/jsdoc-tsd-webpack-plugin'><img alt='npm logo' src='https://github.com/Jaid/action-readme/raw/master/images/base-assets/npm.png'/></a>
 ```bash
-npm install --save jsdoc-tsd-webpack-plugin@^
+npm install --save jsdoc-tsd-webpack-plugin@^3.3.6
 ```
-<a href='https://yarnpkg.com/package/jsdoc-tsd-webpack-plugin'><img alt='Yarn logo' src='https://raw.githubusercontent.com/yarnpkg/assets/master/yarn-kitten-full.png' height=24/></a>
+<a href='https://yarnpkg.com/package/jsdoc-tsd-webpack-plugin'><img alt='Yarn logo' src='https://github.com/Jaid/action-readme/raw/master/images/base-assets/yarn.png'/></a>
 ```bash
-yarn add jsdoc-tsd-webpack-plugin@^
+yarn add jsdoc-tsd-webpack-plugin@^3.3.6
 ```
 
 
-## Try it out
-Open a browser's JavaScript console and execute:
-
-```javascript
-const scriptElement = document.createElement("script");
-scriptElement.setAttribute("type","text/javascript");
-scriptElement.setAttribute("src","https://unpkg.com/jsdoc-tsd-webpack-plugin@3.3.6");
-document.querySelector("head").appendChild(scriptElement);
-```
-
-The module is now loaded in a variable.
-
-```javascript
-typeof jsdoc-tsd-webpack-plugin.default
-```
 
 ## Documentation
 **Kind**: Exported class  
