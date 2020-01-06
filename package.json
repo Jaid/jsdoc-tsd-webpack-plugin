@@ -3,35 +3,35 @@
   "version": "3.3.6",
   "author": "Jaid <jaid.jsx@gmail.com> (https://github.com/Jaid)",
   "dependencies": {
-    "@absolunet/fss": "^1.6.1",
-    "better-docs": "^1.1.6",
+    "@absolunet/fss": "^1.6.2",
+    "better-docs": "^1.4.7",
     "debug": "^4.1.1",
     "first-existing-path": "^1.0.1",
-    "jsdoc-api": "^5.0.1",
+    "jsdoc-api": "^5.0.4",
     "jsdoc-babel": "^0.5.0",
     "jsdoc-export-default-interop": "^0.3.1",
-    "tsd-jsdoc": "^2.3.1"
+    "tsd-jsdoc": "^2.4.0"
   },
   "peerDependencies": {
-    "webpack": "^4.35.3"
+    "webpack": "^4.41.5"
   },
   "optionalDependencies": {
     "publishimo-webpack-plugin": "2.0.0"
   },
   "devDependencies": {
-    "@absolunet/fsp": "^1.6.1",
-    "acorn": "^6.2.0",
-    "babel-jest": "^24.8.0",
-    "babel-preset-jaid": "^6.8.1",
-    "browserslist-config-jaid-node": "^2.2.1",
+    "@absolunet/fsp": "^1.6.2",
+    "acorn": "^7.1.0",
+    "babel-jest": "^24.9.0",
+    "babel-preset-jaid": "^7.3.0",
+    "browserslist-config-jaid-node": "^2.2.2",
     "clean-webpack-plugin": "^3.0.0",
-    "eslint": "^6.0.1",
-    "eslint-config-jaid": "^1.18.0",
-    "jest": "^24.8.0",
-    "rimraf": "^2.6.3",
+    "eslint": "^6.8.0",
+    "eslint-config-jaid": "^1.41.1",
+    "jest": "^24.9.0",
+    "rimraf": "^3.0.0",
     "tmp-promise": "^2.0.2",
-    "webpack": "^4.35.3",
-    "webpack-config-jaid": "5.22.0"
+    "webpack": "^4.41.5",
+    "webpack-config-jaid": "9.3.1"
   },
   "scripts": {
     "clean": "rimraf dist/",
