@@ -1,29 +1,68 @@
 # jsdoc-tsd-webpack-plugin
 
 
-Generates project homepages and a TypeScript definition files with Webpack.
+<a href="https://raw.githubusercontent.com/Jaid/jsdoc-tsd-webpack-plugin/master/license.txt"><img src="https://img.shields.io/github/license/Jaid/jsdoc-tsd-webpack-plugin?style=flat-square" alt="License"/></a>  
+<a href="https://actions-badge.atrox.dev/Jaid/jsdoc-tsd-webpack-plugin/goto"><img src="https://img.shields.io/endpoint.svg?style=flat-square&url=https%3A%2F%2Factions-badge.atrox.dev%2FJaid%2Fjsdoc-tsd-webpack-plugin%2Fbadge" alt="Build status"/></a> <a href="https://github.com/Jaid/jsdoc-tsd-webpack-plugin/commits"><img src="https://img.shields.io/github/commits-since/Jaid/jsdoc-tsd-webpack-plugin/v3.3.6?style=flat-square&logo=github" alt="Commits since v3.3.6"/></a> <a href="https://github.com/Jaid/jsdoc-tsd-webpack-plugin/commits"><img src="https://img.shields.io/github/last-commit/Jaid/jsdoc-tsd-webpack-plugin?style=flat-square&logo=github" alt="Last commit"/></a> <a href="https://github.com/Jaid/jsdoc-tsd-webpack-plugin/issues"><img src="https://img.shields.io/github/issues/Jaid/jsdoc-tsd-webpack-plugin?style=flat-square&logo=github" alt="Issues"/></a>  
+<a href="https://npmjs.com/package/jsdoc-tsd-webpack-plugin"><img src="https://img.shields.io/npm/v/jsdoc-tsd-webpack-plugin?style=flat-square&logo=npm&label=latest%20version" alt="Latest version on npm"/></a> <a href="https://github.com/Jaid/jsdoc-tsd-webpack-plugin/network/dependents"><img src="https://img.shields.io/librariesio/dependents/npm/jsdoc-tsd-webpack-plugin?style=flat-square&logo=npm" alt="Dependents"/></a> <a href="https://npmjs.com/package/jsdoc-tsd-webpack-plugin"><img src="https://img.shields.io/npm/dm/jsdoc-tsd-webpack-plugin?style=flat-square&logo=npm" alt="Downloads"/></a>
+
+**Generates project homepages and a TypeScript definition files with Webpack.**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Installation
-<a href='https://npmjs.com/package/jsdoc-tsd-webpack-plugin'><img alt='npm logo' src='https://github.com/Jaid/action-readme/raw/master/images/base-assets/npm.png'/></a>
+<a href="https://npmjs.com/package/jsdoc-tsd-webpack-plugin"><img src="https://img.shields.io/badge/npm-jsdoc--tsd--webpack--plugin-C23039?style=flat-square&logo=npm" alt="jsdoc-tsd-webpack-plugin on npm"/></a>
 ```bash
 npm install --save jsdoc-tsd-webpack-plugin@^3.3.6
 ```
-<a href='https://yarnpkg.com/package/jsdoc-tsd-webpack-plugin'><img alt='Yarn logo' src='https://github.com/Jaid/action-readme/raw/master/images/base-assets/yarn.png'/></a>
+<a href="https://yarnpkg.com/package/jsdoc-tsd-webpack-plugin"><img src="https://img.shields.io/badge/Yarn-jsdoc--tsd--webpack--plugin-2F8CB7?style=flat-square&logo=yarn&logoColor=white" alt="jsdoc-tsd-webpack-plugin on Yarn"/></a>
 ```bash
 yarn add jsdoc-tsd-webpack-plugin@^3.3.6
 ```
 
 
 
-## Documentation
-**Kind**: Exported class  
+
+
+
+
+
+## Development
+
+
+
+Setting up:
+```bash
+git clone git@github.com:Jaid/jsdoc-tsd-webpack-plugin.git
+cd jsdoc-tsd-webpack-plugin
+npm install
+```
+Testing:
+```bash
+npm run test:dev
+```
+Testing in production environment:
+```bash
+npm run test
+```
 
 
 ## License
 ```text
 MIT License
 
-Copyright © 2019, Jaid <jaid.jsx@gmail.com> (github.com/jaid)
+Copyright © 2020, Jaid <jaid.jsx@gmail.com> (github.com/jaid)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
