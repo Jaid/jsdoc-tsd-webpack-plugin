@@ -48,5 +48,9 @@
   },
   "name": "jsdoc-tsd-webpack-plugin",
   "description": "Generates project homepages and a TypeScript definition files with Webpack.",
-  "funding": "https://github.com/sponsors/jaid"
+  "funding": "https://github.com/sponsors/jaid",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jaid/jsdoc-tsd-webpack-plugin"
+  }
 }
