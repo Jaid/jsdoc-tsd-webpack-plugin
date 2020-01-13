@@ -47,5 +47,6 @@
     "prepareActionJest": "npm run build:prod"
   },
   "name": "jsdoc-tsd-webpack-plugin",
-  "description": "Generates project homepages and a TypeScript definition files with Webpack."
+  "description": "Generates project homepages and a TypeScript definition files with Webpack.",
+  "funding": "https://github.com/sponsors/jaid"
 }
