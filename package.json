@@ -52,5 +52,26 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/jaid/jsdoc-tsd-webpack-plugin"
-  }
+  },
+  "homepage": "https://github.com/Jaid/jsdoc-tsd-webpack-plugin",
+  "keywords": [
+    "compiler",
+    "documentation",
+    "documentation-generator",
+    "ecmascript",
+    "esdoc",
+    "html-documentation",
+    "javascript",
+    "jsdoc",
+    "jsdoc-plugin",
+    "publish",
+    "static-site",
+    "static-site-generator",
+    "tsd",
+    "typescript",
+    "typescript-definition",
+    "typescript-definitions",
+    "webpack",
+    "webpack-plugin"
+  ]
 }
