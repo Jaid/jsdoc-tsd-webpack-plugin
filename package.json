@@ -31,7 +31,7 @@
     "rimraf": "^3.0.2",
     "tmp-promise": "^2.0.2",
     "webpack": "^4.42.1",
-    "webpack-config-jaid": "11.8.0"
+    "webpack-config-jaid": "11.13.0"
   },
   "scripts": {
     "clean": "rimraf dist/",
