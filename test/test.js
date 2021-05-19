@@ -1,11 +1,10 @@
-import path from "path"
-
-import fs from "fs-extra"
-import webpack from "webpack"
-import pify from "pify"
-import {CleanWebpackPlugin} from "clean-webpack-plugin"
-import PublishimoWebpackPlugin from "publishimo-webpack-plugin"
 import fsp from "@absolunet/fsp"
+import {CleanWebpackPlugin} from "clean-webpack-plugin"
+import fs from "fs-extra"
+import path from "path"
+import pify from "pify"
+import PublishimoWebpackPlugin from "publishimo-webpack-plugin"
+import webpack from "webpack"
 
 const indexModule = process.env.MAIN ? path.resolve(__dirname, "..", process.env.MAIN) : path.join(__dirname, "..", "src")
 const {default: JsdocTsdWebpackPlugin} = require(indexModule)

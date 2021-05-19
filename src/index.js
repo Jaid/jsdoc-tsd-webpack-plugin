@@ -1,13 +1,12 @@
 /** @module jsdoc-tsd-webpack-plugin */
 
-import path from "path"
-
-import tmpPromise from "tmp-promise"
-import firstExistingPath from "first-existing-path"
-import readPkgUp from "read-pkg-up"
-import {isObject} from "lodash"
-import {renderSync} from "jsdoc-api"
 import fss from "@absolunet/fss"
+import firstExistingPath from "first-existing-path"
+import {renderSync} from "jsdoc-api"
+import {isObject} from "lodash"
+import path from "path"
+import readPkgUp from "read-pkg-up"
+import tmpPromise from "tmp-promise"
 
 import transformTsd from "./transformTsd"
 
