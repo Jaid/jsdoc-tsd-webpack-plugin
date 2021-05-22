@@ -10,7 +10,7 @@ import tmpPromise from "tmp-promise"
 
 import transformTsd from "./transformTsd"
 
-const debug = require("debug")(_PKG_NAME)
+const debug = require("debug")(process.env.REPLACE_PKG_NAME)
 
 const webpackId = "JsdocTsdWebpackPlugin"
 
