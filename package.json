@@ -13,10 +13,10 @@
     "tsd-jsdoc": "^2.5.0"
   },
   "peerDependencies": {
-    "webpack": "^4.42.1"
+    "webpack": "^5.37.1"
   },
   "optionalDependencies": {
-    "publishimo-webpack-plugin": "2.0.0"
+    "publishimo-webpack-plugin": "3.0.0"
   },
   "devDependencies": {
     "@absolunet/fsp": "^1.6.2",
@@ -30,7 +30,7 @@
     "jest": "^25.3.0",
     "rimraf": "^3.0.2",
     "tmp-promise": "^2.0.2",
-    "webpack": "^4.42.1",
+    "webpack": "^5.37.1",
     "webpack-config-jaid": "11.13.0"
   },
   "scripts": {
