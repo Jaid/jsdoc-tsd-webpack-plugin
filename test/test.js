@@ -29,7 +29,7 @@ const runWebpack = async (name, extraConfig) => {
   return stats
 }
 
-it("should run", () => runWebpack("basic", {
+it("basic", () => runWebpack("basic", {
   plugins: [
     new CleanWebpackPlugin,
     new JsdocTsdWebpackPlugin,
