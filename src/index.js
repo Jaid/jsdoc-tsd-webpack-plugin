@@ -205,11 +205,12 @@ export default class {
 
       for (const {name, modulePath, configFactory, postProcess} of setups) {
         const {configPath, config} = configFactory(compilation, configBase, modulePath, this.options, tempDir)
-        debug(`${name}: Calling jsdoc-api with entry point ${compiler.options.entry} and configuration ${configPath}`)
-        debug(`CLI equivalent: DEBUG=* ${path.join(compiler.context, "node_modules", ".bin", "jsdoc")} --verbose --configure ${configPath} ${compiler.options.entry}`)
+        const entry = compiler.options.entry.main.import[0]
+        debug(`${name}: Calling jsdoc-api with entry point ${entry} and configuration ${configPath}`)
+        debug(`CLI equivalent: DEBUG=* ${path.join(compiler.context, "node_modules", ".bin", "jsdoc")} --verbose --configure ${configPath} ${entry}`)
         fss.ensureDir(config.opts.destination)
         renderSync({
-          files: compiler.options.entry,
+          files: entry,
           configure: configPath,
         })
         if (!fss.pathExists(config.opts.destination)) {
