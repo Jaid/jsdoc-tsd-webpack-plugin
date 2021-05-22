@@ -1,6 +1,6 @@
 {
   "webpackConfigJaid": "nodeClass",
-  "version": "3.3.6",
+  "version": "4.0.0",
   "author": "Jaid <jaid.jsx@gmail.com> (https://github.com/Jaid)",
   "dependencies": {
     "@absolunet/fss": "^1.6.2",
