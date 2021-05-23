@@ -16,7 +16,7 @@
     "webpack": "^5.37.1"
   },
   "optionalDependencies": {
-    "publishimo-webpack-plugin": "3.0.0"
+    "publishimo-webpack-plugin": "4.0.0"
   },
   "devDependencies": {
     "@absolunet/fsp": "^1.6.2",
