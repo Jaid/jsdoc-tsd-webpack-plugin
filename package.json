@@ -73,5 +73,6 @@
     "typescript-definitions",
     "webpack",
     "webpack-plugin"
-  ]
+  ],
+  "type": "module"
 }
